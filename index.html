@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>↑ここをタップして！</title>
+  <title>ようこそ3年6組へ！</title>
   <style>
     body {
       background-color: #1b4332;
@@ -22,8 +22,18 @@
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
-    h1 {
+    .guide-text {
       color: #ffeb3b;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      background: rgba(255, 235, 59, 0.2);
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px dashed #ffeb3b;
+    }
+    h1 {
+      color: #ffffff;
       font-size: 22px;
       margin-bottom: 5px;
     }
@@ -60,23 +70,32 @@
       border-radius: 15px;
       margin-top: 10px;
     }
+    .game-btn:disabled {
+      background-color: #888;
+      opacity: 0.6;
+    }
     #result, #game-result {
       font-size: 18px;
       font-weight: bold;
       color: #ffeb3b;
       margin-top: 15px;
       min-height: 28px;
+      line-height: 1.4;
     }
     .counter {
-      font-size: 12px;
+      font-size: 13px;
       color: #a3e635;
       margin-top: 15px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- 導線案内テキスト -->
+    <div class="guide-text">↑をタップして！</div>
+
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
     <p>QRコードを読み取ってくれてありがとう！</p>
 
@@ -117,11 +136,11 @@
       document.getElementById("result").innerText = results[random];
     }
 
-    // --- アクセスカウンター (CountAPI) ---
-    fetch('https://api.countapi.xyz/hit/arios35-bunkasai/visits')
+    // --- アクセスカウンター (counterapi.dev) ---
+    fetch('https://counterapi.dev/v1/arios35-bunkasai/visits/up')
       .then(res => res.json())
       .then(data => {
-        document.getElementById('visit-count').innerText = data.value;
+        document.getElementById('visit-count').innerText = data.count;
       })
       .catch(() => {
         document.getElementById('visit-count').innerText = "たくさんの";
@@ -152,15 +171,25 @@
           if (timeLeft <= 0) {
             clearInterval(timerId);
             isPlaying = false;
-            btn.innerText = "もう一度遊ぶ！";
             
+            // 連打直後の誤タップ防止（5秒間ボタンを無効化）
+            btn.disabled = true;
+            btn.innerText = "終了！結果発表！";
+
             let rank = "";
-            if (count >= 70) rank = "🏆 神レベル！指の動きが見えん…！";
-            else if (count >= 50) rank = "🔥 達人レベル！連打マスター！";
-            else if (count >= 30) rank = "👍 すごい！かなりの高速連打！";
-            else rank = " ナイスチャレンジ！";
+            if (count >= 100) rank = "👑 100回越え!? 連打の神降臨！";
+            else if (count >= 80) rank = "⚡ 超人レベル！指から光出てる！";
+            else if (count >= 65) rank = "🏆 達人レベル！人間卒業！";
+            else if (count >= 50) rank = "🔥 プロ連打士！めちゃくちゃ早い！";
+            else if (count >= 35) rank = "👍 平均越え！かなりの高速連打！";
+            else rank = "😊 ナイスチャレンジ！";
 
             document.getElementById('game-result').innerText = rank;
+
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.innerText = "もう一度遊ぶ！";
+            }, 5000);
           }
         }, 1000);
       } else {

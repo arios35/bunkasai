@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ようこそ3年6組へ！</title>
+  <title>↑ここをタップ！</title>
   <style>
     body {
       background-color: #1b4332;
@@ -22,18 +22,8 @@
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
-    .guide-text {
-      color: #ffeb3b;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      background: rgba(255, 235, 59, 0.2);
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px dashed #ffeb3b;
-    }
     h1 {
-      color: #ffffff;
+      color: #ffeb3b;
       font-size: 22px;
       margin-bottom: 5px;
     }
@@ -50,23 +40,32 @@
       background-color: #ff5722;
       color: white;
       border: none;
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 10px 20px;
+      font-size: 15px;
       font-weight: bold;
       border-radius: 25px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
       user-select: none;
+      margin: 5px;
     }
     .btn:active {
       transform: scale(0.95);
+    }
+    .quiz-btn {
+      display: block;
+      width: 100%;
+      background-color: #2196f3;
+      text-align: left;
+      padding: 12px 15px;
+      box-sizing: border-box;
     }
     .game-btn {
       background-color: #e91e63;
       width: 100%;
       max-width: 250px;
-      height: 70px;
-      font-size: 20px;
+      height: 65px;
+      font-size: 18px;
       border-radius: 15px;
       margin-top: 10px;
     }
@@ -74,34 +73,47 @@
       background-color: #888;
       opacity: 0.6;
     }
-    #result, #game-result {
-      font-size: 18px;
+    #result, #game-result, .quiz-ans {
+      font-size: 16px;
       font-weight: bold;
       color: #ffeb3b;
-      margin-top: 15px;
-      min-height: 28px;
-      line-height: 1.4;
+      margin-top: 10px;
     }
-    .counter {
-      font-size: 13px;
-      color: #a3e635;
-      margin-top: 15px;
+    .menu-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+      padding: 8px 0;
       font-weight: bold;
+    }
+    .menu-item:last-child {
+      border-bottom: none;
+      color: #ffeb3b;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- 導線案内テキスト -->
-    <div class="guide-text">↑をタップして！</div>
-
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
     <p>QRコードを読み取ってくれてありがとう！</p>
 
-    <!-- アクセスカウンター -->
-    <div class="counter">
-      👁️ あなたは <span id="visit-count">...</span> 人目の訪問者です！
+    <!-- メニュー -->
+    <div class="box">
+      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🍧 MENU 🍧</p>
+      <div class="menu-container">
+        <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
+        <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
+        <div class="menu-item"><span>🍍 冷凍パイン</span><span>300円</span></div>
+        <div class="menu-item"><span>🍧 フローズンパイン</span><span>300円</span></div>
+        <div class="menu-item"><span>😊 スマイル</span><span>0円</span></div>
+      </div>
     </div>
 
     <!-- おみくじ -->
@@ -109,6 +121,38 @@
       <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🔮 今日の運勢 🔮</p>
       <button class="btn" onclick="drawOmikuji()">おみくじを引く！</button>
       <div id="result"></div>
+    </div>
+
+    <!-- 3年6組クイズ -->
+    <div class="box">
+      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">❓ 3年6組クイズ ❓</p>
+
+      <!-- Q1 -->
+      <div style="text-align: left; margin-top: 10px;">
+        <p style="font-weight: bold; margin: 5px 0;">Q1. 3年6組の担任の先生は？</p>
+        <button class="btn quiz-btn" onclick="checkQuiz(1, 1)">1. 崎山先生</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(1, 2)">2. 鷲尾先生</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(1, 3)">3. 今井先生</button>
+        <div id="q1-ans" class="quiz-ans"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div style="text-align: left; margin-top: 15px;">
+        <p style="font-weight: bold; margin: 5px 0;">Q2. 3年6組の人数は？</p>
+        <button class="btn quiz-btn" onclick="checkQuiz(2, 1)">1. 40人</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(2, 2)">2. 38人</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(2, 3)">3. 36人</button>
+        <div id="q2-ans" class="quiz-ans"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div style="text-align: left; margin-top: 15px;">
+        <p style="font-weight: bold; margin: 5px 0;">Q3. このQRコードを描いたのは誰？</p>
+        <button class="btn quiz-btn" onclick="checkQuiz(3, 1)">1. 担任の先生</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(3, 2)">2. 文化祭実行委員</button>
+        <button class="btn quiz-btn" onclick="checkQuiz(3, 3)">3. 暇だった人</button>
+        <div id="q3-ans" class="quiz-ans"></div>
+      </div>
     </div>
 
     <!-- 10秒連打ゲーム -->
@@ -136,15 +180,19 @@
       document.getElementById("result").innerText = results[random];
     }
 
-    // --- アクセスカウンター (counterapi.dev) ---
-    fetch('https://counterapi.dev/v1/arios35-bunkasai/visits/up')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('visit-count').innerText = data.count;
-      })
-      .catch(() => {
-        document.getElementById('visit-count').innerText = "たくさんの";
-      });
+    // --- クイズ判定 ---
+    function checkQuiz(qNum, choice) {
+      const answers = { 1: 2, 2: 3, 3: 3 };
+      const targetDiv = document.getElementById(`q${qNum}-ans`);
+      
+      if (choice === answers[qNum]) {
+        targetDiv.innerText = "⭕ 正解！さすが！";
+        targetDiv.style.color = "#76ff03";
+      } else {
+        targetDiv.innerText = "❌ 残念！ちがうよ〜";
+        targetDiv.style.color = "#ff5252";
+      }
+    }
 
     // --- 10秒連打ゲーム ---
     let count = 0;
@@ -156,7 +204,6 @@
       const btn = document.getElementById('tap-btn');
       
       if (!isPlaying) {
-        // ゲーム開始
         isPlaying = true;
         count = 1;
         timeLeft = 10;
@@ -171,8 +218,6 @@
           if (timeLeft <= 0) {
             clearInterval(timerId);
             isPlaying = false;
-            
-            // 連打直後の誤タップ防止（5秒間ボタンを無効化）
             btn.disabled = true;
             btn.innerText = "終了！結果発表！";
 
@@ -193,7 +238,6 @@
           }
         }, 1000);
       } else {
-        // 連打中
         count++;
         document.getElementById('score').innerText = "スコア: " + count + "回";
       }

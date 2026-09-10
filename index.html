@@ -10,7 +10,7 @@
       color: #ffffff;
       font-family: "Helvetica Neue", Arial, sans-serif;
       text-align: center;
-      padding: 30px 15px;
+      padding: 30px 15px 60px 15px;
       margin: 0;
     }
     .container {
@@ -18,7 +18,7 @@
       margin: 0 auto;
       border: 3px solid #ffffff;
       border-radius: 20px;
-      padding: 25px 15px;
+      padding: 30px 15px;
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
@@ -31,10 +31,10 @@
       font-size: 14px;
       line-height: 1.6;
     }
-    /* セクション同士の余白を広げてスッキリ配置 */
+    /* セクション同士の余白をさらに大幅に広げる */
     .box {
-      margin-top: 35px;
-      padding-top: 25px;
+      margin-top: 50px;
+      padding-top: 35px;
       border-top: 1px dashed rgba(255, 255, 255, 0.4);
     }
     .btn {
@@ -60,7 +60,7 @@
       text-align: left;
       padding: 12px 15px;
       box-sizing: border-box;
-      margin-top: 8px;
+      margin-top: 10px;
     }
     .game-btn {
       background-color: #e91e63;
@@ -75,16 +75,14 @@
       background-color: #888;
       opacity: 0.6;
     }
-    /* おみくじ結果の改行崩れを防止 */
+    /* おみくじ結果のサイズと改行調整 */
     #result {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: bold;
       color: #ffeb3b;
       margin-top: 15px;
-      min-height: 48px;
+      min-height: 40px;
       line-height: 1.5;
-      word-break: keep-all;
-      overflow-wrap: break-word;
       padding: 0 5px;
     }
     #game-result, .quiz-ans {
@@ -98,13 +96,13 @@
       padding: 15px 20px;
       border-radius: 12px;
       font-size: 15px;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     .menu-item {
       display: flex;
       justify-content: space-between;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-      padding: 10px 0;
+      padding: 12px 0;
       font-weight: bold;
     }
     .menu-item:last-child {
@@ -121,7 +119,7 @@
 
     <!-- メニュー -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🍧 MENU 🍧</p>
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🍧 MENU 🍧</p>
       <div class="menu-container">
         <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
         <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
@@ -133,17 +131,17 @@
 
     <!-- おみくじ -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🔮 今日の運勢 🔮</p>
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🔮 今日の運勢 🔮</p>
       <button class="btn" onclick="drawOmikuji()">おみくじを引く！</button>
       <div id="result"></div>
     </div>
 
     <!-- 3年6組クイズ -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 17px; margin: 0 0 15px 0;">❓ 3年6組クイズ ❓</p>
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 15px 0;">❓ 3年6組クイズ ❓</p>
 
       <!-- Q1 -->
-      <div style="text-align: left; margin-top: 15px;">
+      <div style="text-align: left; margin-top: 20px;">
         <p style="font-weight: bold; margin: 5px 0;">Q1. 3年6組の担任の先生は？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(1, 1)">1. 崎山先生</button>
         <button class="btn quiz-btn" onclick="checkQuiz(1, 2)">2. 鷲尾先生</button>
@@ -152,7 +150,7 @@
       </div>
 
       <!-- Q2 -->
-      <div style="text-align: left; margin-top: 20px;">
+      <div style="text-align: left; margin-top: 25px;">
         <p style="font-weight: bold; margin: 5px 0;">Q2. 3年6組の人数は？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(2, 1)">1. 40人</button>
         <button class="btn quiz-btn" onclick="checkQuiz(2, 2)">2. 38人</button>
@@ -161,7 +159,7 @@
       </div>
 
       <!-- Q3 -->
-      <div style="text-align: left; margin-top: 20px;">
+      <div style="text-align: left; margin-top: 25px;">
         <p style="font-weight: bold; margin: 5px 0;">Q3. このQRコードを描いたのは誰？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(3, 1)">1. 担任の先生</button>
         <button class="btn quiz-btn" onclick="checkQuiz(3, 2)">2. 文化祭実行委員</button>
@@ -172,10 +170,10 @@
 
     <!-- 10秒連打ゲーム -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
-      <p style="font-size: 13px; margin-bottom: 12px;">10秒間でボタンを何回連打できるか勝負！</p>
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
+      <p style="font-size: 13px; margin-bottom: 15px;">10秒間でボタンを何回連打できるか勝負！</p>
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
-      <div id="score" style="font-size: 22px; font-weight: bold; color: #ffeb3b; margin: 8px 0;">スコア: 0回</div>
+      <div id="score" style="font-size: 22px; font-weight: bold; color: #ffeb3b; margin: 10px 0;">スコア: 0回</div>
       
       <button id="tap-btn" class="btn game-btn" onclick="tapGame()">タップしてスタート！</button>
       <div id="game-result"></div>

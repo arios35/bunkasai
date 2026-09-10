@@ -1,32 +1,91 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ようこそ3年6組へ！</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #111; /* かっこいいダークモード風 */
-            color: #fff;
-            font-family: sans-serif;
-            text-align: center;
-        }
-        h1 {
-            font-size: 8vw; /* 画面幅に合わせてでかくなる設定 */
-            font-weight: bold;
-            line-height: 1.4;
-            padding: 20px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ようこそ3年6組へ！</title>
+  <style>
+    body {
+      background-color: #1b4332;
+      color: #ffffff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      text-align: center;
+      padding: 30px 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      border: 3px solid #ffffff;
+      border-radius: 20px;
+      padding: 25px 15px;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #ffeb3b;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .omikuji-box {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.4);
+    }
+    .btn {
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    .btn:active {
+      transform: scale(0.95);
+    }
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ffeb3b;
+      margin-top: 20px;
+      min-height: 36px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
 <body>
-    <h1>ようこそ<br>3年6組へ！！</h1>
+
+  <div class="container">
+    <h1>✨ ようこそ3年6組へ！！ ✨</h1>
+    <p>QRコードを読み取ってくれてありがとう！</p>
+
+    <div class="omikuji-box">
+      <p style="font-weight: bold; font-size: 18px;">🔮 今日の運勢 🔮</p>
+      <button class="btn" onclick="drawOmikuji()">おみくじを引く！</button>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    function drawOmikuji() {
+      const results = [
+        "🎉 超大吉：3年6組で最高の思い出ができる！",
+        "✨ 大吉：今日イチのラッキーが訪れる予感！",
+        "☘️ 中吉：出し物を満喫できる楽しさ倍増デー！",
+        "🌟 吉：笑顔があふれる素敵な一日になりそう！"
+      ];
+      const random = Math.floor(Math.random() * results.length);
+      document.getElementById("result").innerText = results[random];
+    }
+  </script>
+
 </body>
 </html>

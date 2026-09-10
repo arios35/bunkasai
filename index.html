@@ -10,7 +10,7 @@
       color: #ffffff;
       font-family: "Helvetica Neue", Arial, sans-serif;
       text-align: center;
-      padding: 20px 15px;
+      padding: 30px 15px;
       margin: 0;
     }
     .container {
@@ -18,29 +18,30 @@
       margin: 0 auto;
       border: 3px solid #ffffff;
       border-radius: 20px;
-      padding: 20px 15px;
+      padding: 25px 15px;
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
     h1 {
       color: #ffeb3b;
       font-size: 22px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
     p {
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
+    /* セクション同士の余白を広げてスッキリ配置 */
     .box {
-      margin-top: 20px;
-      padding-top: 15px;
+      margin-top: 35px;
+      padding-top: 25px;
       border-top: 1px dashed rgba(255, 255, 255, 0.4);
     }
     .btn {
       background-color: #ff5722;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 15px;
       font-weight: bold;
       border-radius: 25px;
@@ -59,6 +60,7 @@
       text-align: left;
       padding: 12px 15px;
       box-sizing: border-box;
+      margin-top: 8px;
     }
     .game-btn {
       background-color: #e91e63;
@@ -67,29 +69,42 @@
       height: 65px;
       font-size: 18px;
       border-radius: 15px;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     .game-btn:disabled {
       background-color: #888;
       opacity: 0.6;
     }
-    #result, #game-result, .quiz-ans {
+    /* おみくじ結果の改行崩れを防止 */
+    #result {
+      font-size: 17px;
+      font-weight: bold;
+      color: #ffeb3b;
+      margin-top: 15px;
+      min-height: 48px;
+      line-height: 1.5;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      padding: 0 5px;
+    }
+    #game-result, .quiz-ans {
       font-size: 16px;
       font-weight: bold;
       color: #ffeb3b;
-      margin-top: 10px;
+      margin-top: 12px;
     }
     .menu-container {
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
+      padding: 15px 20px;
       border-radius: 12px;
       font-size: 15px;
+      margin-top: 10px;
     }
     .menu-item {
       display: flex;
       justify-content: space-between;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-      padding: 8px 0;
+      padding: 10px 0;
       font-weight: bold;
     }
     .menu-item:last-child {
@@ -106,7 +121,7 @@
 
     <!-- メニュー -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🍧 MENU 🍧</p>
+      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🍧 MENU 🍧</p>
       <div class="menu-container">
         <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
         <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
@@ -118,17 +133,17 @@
 
     <!-- おみくじ -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🔮 今日の運勢 🔮</p>
+      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🔮 今日の運勢 🔮</p>
       <button class="btn" onclick="drawOmikuji()">おみくじを引く！</button>
       <div id="result"></div>
     </div>
 
     <!-- 3年6組クイズ -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">❓ 3年6組クイズ ❓</p>
+      <p style="font-weight: bold; font-size: 17px; margin: 0 0 15px 0;">❓ 3年6組クイズ ❓</p>
 
       <!-- Q1 -->
-      <div style="text-align: left; margin-top: 10px;">
+      <div style="text-align: left; margin-top: 15px;">
         <p style="font-weight: bold; margin: 5px 0;">Q1. 3年6組の担任の先生は？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(1, 1)">1. 崎山先生</button>
         <button class="btn quiz-btn" onclick="checkQuiz(1, 2)">2. 鷲尾先生</button>
@@ -137,7 +152,7 @@
       </div>
 
       <!-- Q2 -->
-      <div style="text-align: left; margin-top: 15px;">
+      <div style="text-align: left; margin-top: 20px;">
         <p style="font-weight: bold; margin: 5px 0;">Q2. 3年6組の人数は？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(2, 1)">1. 40人</button>
         <button class="btn quiz-btn" onclick="checkQuiz(2, 2)">2. 38人</button>
@@ -146,7 +161,7 @@
       </div>
 
       <!-- Q3 -->
-      <div style="text-align: left; margin-top: 15px;">
+      <div style="text-align: left; margin-top: 20px;">
         <p style="font-weight: bold; margin: 5px 0;">Q3. このQRコードを描いたのは誰？</p>
         <button class="btn quiz-btn" onclick="checkQuiz(3, 1)">1. 担任の先生</button>
         <button class="btn quiz-btn" onclick="checkQuiz(3, 2)">2. 文化祭実行委員</button>
@@ -157,10 +172,10 @@
 
     <!-- 10秒連打ゲーム -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
-      <p style="font-size: 12px; margin-bottom: 10px;">10秒間でボタンを何回連打できるか勝負！</p>
+      <p style="font-weight: bold; font-size: 17px; margin: 0 0 10px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
+      <p style="font-size: 13px; margin-bottom: 12px;">10秒間でボタンを何回連打できるか勝負！</p>
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
-      <div id="score" style="font-size: 20px; font-weight: bold; color: #ffeb3b; margin: 5px 0;">スコア: 0回</div>
+      <div id="score" style="font-size: 22px; font-weight: bold; color: #ffeb3b; margin: 8px 0;">スコア: 0回</div>
       
       <button id="tap-btn" class="btn game-btn" onclick="tapGame()">タップしてスタート！</button>
       <div id="game-result"></div>
@@ -172,9 +187,11 @@
     function drawOmikuji() {
       const results = [
         "🎉 超大吉：3年6組で最高の思い出ができる！",
-        "✨ 大吉：今日イチのラッキーが訪れる予感！",
-        "☘️ 中吉：出し物を満喫できる楽しさ倍増デー！",
-        "🌟 吉：笑顔があふれる素敵な一日になりそう！"
+        "✨ 大吉：チョコバナナを食べると運気倍増！",
+        "☘️ 中吉：冷たいメニューで気分も最高！",
+        "🌟 吉：笑顔があふれる素敵な一日になりそう！",
+        "🎯 小吉：クイズに全問正解できるかも！？",
+        "🔥 凶：連打ゲームで100回出せば大吉に昇格！"
       ];
       const random = Math.floor(Math.random() * results.length);
       document.getElementById("result").innerText = results[random];

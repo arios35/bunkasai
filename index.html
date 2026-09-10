@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ようこそ3年6組へ！</title>
+  <title>↑ここをタップして！</title>
   <style>
     body {
       background-color: #1b4332;
       color: #ffffff;
       font-family: "Helvetica Neue", Arial, sans-serif;
       text-align: center;
-      padding: 30px 20px;
+      padding: 20px 15px;
       margin: 0;
     }
     .container {
@@ -18,22 +18,22 @@
       margin: 0 auto;
       border: 3px solid #ffffff;
       border-radius: 20px;
-      padding: 25px 15px;
+      padding: 20px 15px;
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
     h1 {
       color: #ffeb3b;
       font-size: 22px;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
     p {
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.5;
     }
-    .omikuji-box {
-      margin-top: 25px;
-      padding-top: 20px;
+    .box {
+      margin-top: 20px;
+      padding-top: 15px;
       border-top: 1px dashed rgba(255, 255, 255, 0.4);
     }
     .btn {
@@ -46,18 +46,31 @@
       border-radius: 25px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-      transition: transform 0.1s;
+      user-select: none;
     }
     .btn:active {
       transform: scale(0.95);
     }
-    #result {
+    .game-btn {
+      background-color: #e91e63;
+      width: 100%;
+      max-width: 250px;
+      height: 70px;
       font-size: 20px;
+      border-radius: 15px;
+      margin-top: 10px;
+    }
+    #result, #game-result {
+      font-size: 18px;
       font-weight: bold;
       color: #ffeb3b;
-      margin-top: 20px;
-      min-height: 36px;
-      line-height: 1.5;
+      margin-top: 15px;
+      min-height: 28px;
+    }
+    .counter {
+      font-size: 12px;
+      color: #a3e635;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -67,14 +80,32 @@
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
     <p>QRコードを読み取ってくれてありがとう！</p>
 
-    <div class="omikuji-box">
-      <p style="font-weight: bold; font-size: 18px;">🔮 今日の運勢 🔮</p>
+    <!-- アクセスカウンター -->
+    <div class="counter">
+      👁️ あなたは <span id="visit-count">...</span> 人目の訪問者です！
+    </div>
+
+    <!-- おみくじ -->
+    <div class="box">
+      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🔮 今日の運勢 🔮</p>
       <button class="btn" onclick="drawOmikuji()">おみくじを引く！</button>
       <div id="result"></div>
+    </div>
+
+    <!-- 10秒連打ゲーム -->
+    <div class="box">
+      <p style="font-weight: bold; font-size: 16px; margin: 5px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
+      <p style="font-size: 12px; margin-bottom: 10px;">10秒間でボタンを何回連打できるか勝負！</p>
+      <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
+      <div id="score" style="font-size: 20px; font-weight: bold; color: #ffeb3b; margin: 5px 0;">スコア: 0回</div>
+      
+      <button id="tap-btn" class="btn game-btn" onclick="tapGame()">タップしてスタート！</button>
+      <div id="game-result"></div>
     </div>
   </div>
 
   <script>
+    // --- おみくじ ---
     function drawOmikuji() {
       const results = [
         "🎉 超大吉：3年6組で最高の思い出ができる！",
@@ -84,6 +115,59 @@
       ];
       const random = Math.floor(Math.random() * results.length);
       document.getElementById("result").innerText = results[random];
+    }
+
+    // --- アクセスカウンター (CountAPI) ---
+    fetch('https://api.countapi.xyz/hit/arios35-bunkasai/visits')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('visit-count').innerText = data.value;
+      })
+      .catch(() => {
+        document.getElementById('visit-count').innerText = "たくさんの";
+      });
+
+    // --- 10秒連打ゲーム ---
+    let count = 0;
+    let timeLeft = 10;
+    let timerId = null;
+    let isPlaying = false;
+
+    function tapGame() {
+      const btn = document.getElementById('tap-btn');
+      
+      if (!isPlaying) {
+        // ゲーム開始
+        isPlaying = true;
+        count = 1;
+        timeLeft = 10;
+        document.getElementById('game-result').innerText = "";
+        document.getElementById('score').innerText = "スコア: " + count + "回";
+        btn.innerText = "連打しろーー！";
+
+        timerId = setInterval(() => {
+          timeLeft--;
+          document.getElementById('timer').innerText = "残り時間: " + timeLeft + "秒";
+          
+          if (timeLeft <= 0) {
+            clearInterval(timerId);
+            isPlaying = false;
+            btn.innerText = "もう一度遊ぶ！";
+            
+            let rank = "";
+            if (count >= 70) rank = "🏆 神レベル！指の動きが見えん…！";
+            else if (count >= 50) rank = "🔥 達人レベル！連打マスター！";
+            else if (count >= 30) rank = "👍 すごい！かなりの高速連打！";
+            else rank = " ナイスチャレンジ！";
+
+            document.getElementById('game-result').innerText = rank;
+          }
+        }, 1000);
+      } else {
+        // 連打中
+        count++;
+        document.getElementById('score').innerText = "スコア: " + count + "回";
+      }
     }
   </script>
 

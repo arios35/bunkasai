@@ -185,7 +185,7 @@
     function drawOmikuji() {
       const results = [
         "🎉 超大吉：3年6組で最高の思い出ができる！",
-        "✨ 大吉：チョコバナナを食べると運気倍増！",
+        "✨ 大吉：冷凍みかんを食べると運気倍増！",
         "☘️ 中吉：冷たいメニューで気分も最高！",
         "🌟 吉：笑顔があふれる素敵な一日になりそう！",
         "🎯 小吉：クイズに全問正解できるかも！？",
@@ -204,7 +204,7 @@
         targetDiv.innerText = "⭕ 正解！さすが！";
         targetDiv.style.color = "#76ff03";
       } else {
-        targetDiv.innerText = "❌ 残念！ちがうよ〜";
+        targetDiv.innerText = "❌ 残念！";
         targetDiv.style.color = "#ff5252";
       }
     }
@@ -242,7 +242,7 @@
             else if (count >= 65) rank = "🏆 達人レベル！人間卒業！";
             else if (count >= 50) rank = "🔥 プロ連打士！めちゃくちゃ早い！";
             else if (count >= 35) rank = "👍 平均越え！かなりの高速連打！";
-            else rank = "😊 ナイスチャレンジ！";
+            else rank = " ナイスチャレンジ！";
 
             document.getElementById('game-result').innerText = rank;
 

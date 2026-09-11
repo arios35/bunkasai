@@ -242,8 +242,8 @@
     <!-- 10秒連打ゲーム -->
     <div class="box">
       <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
-      <p style="font-size: 13px; margin-bottom: 10px;">10秒間で連打！スコアに応じてガチャ券GET！</p>
-      <p style="font-size: 11px; color: #a3e635; margin-bottom: 15px;">（30回:1枚 / 50回:3枚 / 70回:5枚 / 100回:10枚）</p>
+      <p style="font-size: 13px; margin-bottom: 10px;">10秒間で連打！スコアに応じてガチャ券大量GET！</p>
+      <p style="font-size: 11px; color: #a3e635; margin-bottom: 15px;">（30回:3枚 / 50回:10枚 / 70回:20枚 / 100回:50枚）</p>
       
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
       <div id="score" style="font-size: 22px; font-weight: bold; color: #ffeb3b; margin: 10px 0;">スコア: 0回</div>
@@ -315,7 +315,7 @@
     // --- チケットの初期化・保存処理 ---
     let tickets = localStorage.getItem('gachaTickets');
     if (tickets === null) {
-      tickets = 3;
+      tickets = 5; // 初期所持数も少し増やして5枚に！
       localStorage.setItem('gachaTickets', tickets);
     } else {
       tickets = parseInt(tickets);
@@ -343,12 +343,19 @@
     }
 
     // --- クイズ判定 ---
+    const quizSolved = { 1: false, 2: false, 3: false };
     function checkQuiz(qNum, choice) {
       const answers = { 1: 2, 2: 3, 3: 3 };
       const targetDiv = document.getElementById(`q${qNum}-ans`);
       
       if (choice === answers[qNum]) {
-        targetDiv.innerText = "⭕ 正解！さすが！";
+        if (!quizSolved[qNum]) {
+          quizSolved[qNum] = true;
+          updateTickets(1);
+          targetDiv.innerText = "⭕ 正解！🎫ガチャ券1枚GET！";
+        } else {
+          targetDiv.innerText = "⭕ 正解！";
+        }
         targetDiv.style.color = "#76ff03";
       } else {
         targetDiv.innerText = "❌ 残念！ちがうよ〜";
@@ -388,16 +395,16 @@
 
             if (count >= 100) {
               rank = "👑 100回越え!? 連打の神降臨！";
-              earnedTickets = 10;
+              earnedTickets = 50;
             } else if (count >= 70) {
               rank = "⚡ 超人レベル！指から光出てる！";
-              earnedTickets = 5;
+              earnedTickets = 20;
             } else if (count >= 50) {
               rank = "🏆 達人レベル！人間卒業！";
-              earnedTickets = 3;
+              earnedTickets = 10;
             } else if (count >= 30) {
               rank = "🔥 プロ連打士！めちゃくちゃ早い！";
-              earnedTickets = 1;
+              earnedTickets = 3;
             } else {
               rank = "😊 ナイスチャレンジ！(30回以上でチケットGET)";
             }
@@ -440,45 +447,37 @@
 
       setTimeout(() => {
         for (let i = 0; i < times; i++) {
-          const rand = Math.random() * 100; // 0.0 ~ 99.999...
+          const rand = Math.random() * 100;
 
           if (rand < 0.01) {
-            // 0.01% Ω
             resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
             hasSpecial = true;
             specialMsg = "😱😱😱【1/10000の神神神引き】最高レア度『Ω お前は一体何者なんだ』が降臨しました！！！奇跡！！😱😱😱";
           } else if (rand < 0.06) {
-            // 0.05% UR+
             resultsHtml += `<div class="rarity-urplus">⚡ 【UR+】 暇を極めし者 ⚡</div>`;
             if (!hasSpecial) {
               hasSpecial = true;
               specialMsg = "🔥🔥【1/2000の超神引き】UR+『暇を極めし者』が出ました！！凄すぎる！！🔥🔥";
             }
           } else if (rand < 0.16) {
-            // 0.1% LR
             resultsHtml += `<div class="rarity-lr">🌈 【LR】 伝説の暇人 🌈</div>`;
             if (!hasSpecial) {
               hasSpecial = true;
               specialMsg = "🎉🎉🎉【神引き】0.1%の奇跡！LR「伝説の暇人」降臨！！🎉🎉🎉";
             }
           } else if (rand < 1.16) {
-            // 1.0% UR
             resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷凍みかん ✨</div>`;
           } else if (rand < 6.16) {
-            // 5.0% SSR
             resultsHtml += `<div class="rarity-ssr">🌟 【SSR】 フローズンパイン 🌟</div>`;
           } else if (rand < 26.16) {
-            // 20.0% SR
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
-            // 73.84% R
             resultsHtml += `<div class="rarity-r">🍍 【R】 冷凍パイン</div>`;
           }
         }
 
         resultDiv.innerHTML = resultsHtml;
 
-        // 大当たり時の画面ピカピカ演出
         if (hasSpecial) {
           const mainContainer = document.getElementById('main-container');
           mainContainer.classList.add('rainbow-bg');

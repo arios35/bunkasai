@@ -54,7 +54,7 @@
       border-radius: 20px;
       margin-top: 15px;
       box-shadow: 0 0 15px #ff007f;
-      animation: pulse 1.5s infinite;
+      animation: pulse 1.2s infinite;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -167,7 +167,7 @@
     }
     
     /* レア度スタイル */
-    .rarity-god { color: #ffff00; font-weight: bold; font-size: 26px; text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff; animation: pulse 0.5s infinite; }
+    .rarity-god { color: #ffff00; font-weight: bold; font-size: 26px; text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff; animation: pulse 0.4s infinite; }
     .rarity-inf { color: #ff0055; font-weight: bold; font-size: 24px; text-shadow: 0 0 12px #ff0055, 0 0 20px #ffffff; }
     .rarity-omegaplus { color: #00ffcc; font-weight: bold; font-size: 23px; text-shadow: 0 0 12px #00ffcc; }
     .rarity-omega { color: #00ffff; font-weight: bold; font-size: 22px; text-shadow: 0 0 12px #00ffff; }
@@ -214,43 +214,72 @@
     }
     @keyframes god-hyper {
       0% { background-color: #ffff00; transform: scale(1); }
-      25% { background-color: #ff0000; transform: scale(1.02); }
-      50% { background-color: #00ffff; transform: scale(0.98); }
-      75% { background-color: #ff00ff; transform: scale(1.02); }
+      25% { background-color: #ff0000; transform: scale(1.03); }
+      50% { background-color: #00ffff; transform: scale(0.97); }
+      75% { background-color: #ff00ff; transform: scale(1.03); }
       100% { background-color: #ffff00; transform: scale(1); }
+    }
+    @keyframes himajin-enter {
+      0% { background-color: #7928ca; filter: brightness(2); }
+      50% { background-color: #ff007f; filter: brightness(2); }
+      100% { background-color: #1b4332; filter: brightness(1); }
     }
     .rainbow-bg { animation: rainbow 0.3s infinite; }
     .omega-bg { animation: omega-flash 0.15s infinite; }
     .god-bg { animation: god-hyper 0.08s infinite; }
+    .himajin-bg { animation: himajin-enter 0.2s 10; }
 
-    /* GOD確定オーバーレイ */
-    #god-overlay {
+    /* 全画面オーバーレイ */
+    .overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.92);
       z-index: 9999;
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #god-overlay {
       color: #ffff00;
       text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000;
     }
     #god-overlay h2 {
-      font-size: 40px;
-      margin: 0;
+      font-size: 38px;
+      margin: 15px 0;
       animation: pulse 0.2s infinite;
+    }
+    #himajin-overlay {
+      color: #ff00ff;
+      text-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff;
+    }
+    #himajin-overlay h2 {
+      font-size: 32px;
+      margin: 10px 0;
+      color: #00ffff;
     }
   </style>
 </head>
 <body>
 
   <!-- GOD専用ド派手オーバーレイ -->
-  <div id="god-overlay" onclick="closeGodOverlay()">
+  <div id="god-overlay" class="overlay" onclick="closeOverlay('god-overlay')">
     <p style="font-size: 20px; color: #fff;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
     <h2>⚡ GOD 暇人の神 ⚡</h2>
-    <p style="font-size: 18px; color: #fff; margin-top: 20px;">【1/100,000】全人類の頂点に到達！！</p>
-    <p style="font-size: 12px; color: #aaa; margin-top: 30px;">（タップして閉じる）</p>
+    <p style="font-size: 18px; color: #fff; margin-top: 15px;">【1/100,000】全人類の頂点に到達！！</p>
+    <p style="font-size: 13px; color: #aaa; margin-top: 30px;">（タップして閉じる）</p>
+  </div>
+
+  <!-- 暇人モード突入ド派手オーバーレイ -->
+  <div id="himajin-overlay" class="overlay" onclick="closeOverlay('himajin-overlay')">
+    <h2>【暇人モード】に突入！！</h2>
+    <p style="font-size: 20px; color: #ffeb3b; font-weight: bold; margin: 15px 0;">⚡️連打時間20秒⚡️</p>
+    <p style="font-size: 18px; color: #00ffcc; font-weight: bold; margin: 10px 0;">ガチャに「裏レア」追加！！</p>
+    <p style="font-size: 18px; color: #ff9800; font-weight: bold; margin: 10px 0;">🎫ガチャチケットを10枚GET！</p>
+    <p style="font-size: 13px; color: #aaa; margin-top: 30px;">（タップして閉じる）</p>
   </div>
 
   <div class="container" id="main-container">
@@ -346,12 +375,12 @@
       <!-- ガチャ排出率一覧表 -->
       <p style="font-weight: bold; font-size: 15px; margin: 30px 0 5px 0; color: #ffeb3b;">📊 ガチャ提供割合（排出率）</p>
       <table class="prob-table" id="prob-table">
-        <tr id="row-god" style="display: none;"><td class="rarity-god">GOD</td><td>暇人の神</td><td>0.001%</td></tr>
-        <tr id="row-inf" style="display: none;"><td class="rarity-inf">∞</td><td>超越者</td><td>0.005%</td></tr>
-        <tr id="row-omegaplus" style="display: none;"><td class="rarity-omegaplus">Ω+</td><td>誇れ。オマエは暇人だ。</td><td>0.008%</td></tr>
+        <tr id="row-god" style="display: none;"><td class="rarity-god">GOD</td><td id="name-god">？？？</td><td>0.001%</td></tr>
+        <tr id="row-inf" style="display: none;"><td class="rarity-inf">∞</td><td id="name-inf">？？？</td><td>0.005%</td></tr>
+        <tr id="row-omegaplus" style="display: none;"><td class="rarity-omegaplus">Ω+</td><td id="name-omegaplus">？？？</td><td>0.008%</td></tr>
         <tr>
           <td class="rarity-omega">Ω</td>
-          <td id="omega-name">？？？</td>
+          <td id="name-omega">？？？</td>
           <td>0.01%</td>
         </tr>
         <tr>
@@ -419,6 +448,18 @@
       document.getElementById('ticket-count').innerText = tickets;
     }
 
+    // --- 解放フラグ（Ω以上の図鑑解放管理） ---
+    const unlocked = {
+      omega: false,
+      omegaplus: false,
+      inf: false,
+      god: false
+    };
+
+    function closeOverlay(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
     // --- おみくじ ---
     function drawOmikuji() {
       const results = [
@@ -467,8 +508,13 @@
       document.getElementById('row-god').style.display = 'table-row';
       document.getElementById('row-inf').style.display = 'table-row';
       document.getElementById('row-omegaplus').style.display = 'table-row';
-      document.getElementById('omega-name').innerText = "お前は一体何者なんだ";
       document.getElementById('r-prob').innerText = "73.826%";
+
+      // ド派手背景アニメーション＆オーバーレイ表示
+      const mainContainer = document.getElementById('main-container');
+      mainContainer.classList.add('himajin-bg');
+      setTimeout(() => { mainContainer.classList.remove('himajin-bg'); }, 2000);
+      document.getElementById('himajin-overlay').style.display = 'flex';
     }
 
     function tapGame() {
@@ -499,8 +545,8 @@
 
             if (count === 1 && !isHimajinMode) {
               enableHimajinMode();
-              rank = "⚡ 限界突破！！【暇人モード】が発動した！<br>連打時間20秒UP＆ガチャに「裏レア」追加！！";
               earnedTickets = 10;
+              rank = "⚡ 限界突破！！【暇人モード】発動！";
             } else {
               if (count >= 100) {
                 rank = "👑 100回越え!? 連打の神降臨！";
@@ -539,11 +585,7 @@
       }
     }
 
-    // --- ガチャとドーパミン全開演出 ---
-    function closeGodOverlay() {
-      document.getElementById('god-overlay').style.display = 'none';
-    }
-
+    // --- ガチャと長尺ド派手演出 ---
     function drawGacha(times) {
       if (tickets < times) {
         alert("ガチャチケットが足りません！\n連打ゲームでチケットを集めてね！");
@@ -567,18 +609,34 @@
           if (isHimajinMode && rand < 0.001) {
             resultsHtml += `<div class="rarity-god">⚡⚡【GOD】 暇人の神 ⚡⚡</div>`;
             maxRarityLevel = 3;
+            if (!unlocked.god) {
+              unlocked.god = true;
+              document.getElementById('name-god').innerText = "暇人の神 【NEW!】";
+            }
           } else if (isHimajinMode && rand < 0.006) {
             resultsHtml += `<div class="rarity-inf">💫 【∞】 超越者 💫</div>`;
             if (maxRarityLevel < 2) maxRarityLevel = 2;
             if (!specialMsg) specialMsg = "🌟🌟【1/20000の超引き】レア度『∞ 超越者』降臨！！🌟🌟";
+            if (!unlocked.inf) {
+              unlocked.inf = true;
+              document.getElementById('name-inf').innerText = "超越者 【NEW!】";
+            }
           } else if (isHimajinMode && rand < 0.014) {
             resultsHtml += `<div class="rarity-omegaplus">👑 【Ω+】 誇れ。オマエは暇人だ。 👑</div>`;
             if (maxRarityLevel < 2) maxRarityLevel = 2;
             if (!specialMsg) specialMsg = "🔥🔥【裏激レア】Ω+『誇れ。オマエは暇人だ。』を獲得！！🔥🔥";
+            if (!unlocked.omegaplus) {
+              unlocked.omegaplus = true;
+              document.getElementById('name-omegaplus').innerText = "誇れ。オマエは暇人だ。 【NEW!】";
+            }
           } else if (rand < (isHimajinMode ? 0.024 : 0.01)) {
             resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
             if (maxRarityLevel < 2) maxRarityLevel = 2;
             if (!specialMsg) specialMsg = "😱😱【神引き】最高レア度『Ω お前は一体何者なんだ』が降臨！！！😱😱";
+            if (!unlocked.omega) {
+              unlocked.omega = true;
+              document.getElementById('name-omega').innerText = "お前は一体何者なんだ 【NEW!】";
+            }
           } else if (rand < (isHimajinMode ? 0.074 : 0.06)) {
             resultsHtml += `<div class="rarity-urplus">⚡ 【UR+】 暇を極めし者 ⚡</div>`;
             if (maxRarityLevel < 1) maxRarityLevel = 1;
@@ -602,28 +660,28 @@
 
         const mainContainer = document.getElementById('main-container');
 
-        // レア度別のド派手演出判定
+        // 長尺演出判定
         if (maxRarityLevel === 3) {
-          // --- GOD演出：ドーパミン全開 ---
+          // GOD演出：12秒間ド派手点滅
           document.getElementById('god-overlay').style.display = 'flex';
           mainContainer.classList.add('god-bg');
           setTimeout(() => {
             mainContainer.classList.remove('god-bg');
-          }, 6000);
+          }, 12000);
         } else if (maxRarityLevel === 2) {
-          // --- Ω / Ω+ / ∞ 演出：超激しいフラッシュ ---
+          // Ω系演出：8秒間フラッシュ
           mainContainer.classList.add('omega-bg');
           alert(specialMsg);
           setTimeout(() => {
             mainContainer.classList.remove('omega-bg');
-          }, 4500);
+          }, 8000);
         } else if (maxRarityLevel === 1) {
-          // --- LR / UR+ 演出：虹色点滅 ---
+          // LR系演出：5秒間虹色
           mainContainer.classList.add('rainbow-bg');
           alert(specialMsg);
           setTimeout(() => {
             mainContainer.classList.remove('rainbow-bg');
-          }, 3000);
+          }, 5000);
         }
 
       }, 500);

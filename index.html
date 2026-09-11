@@ -117,7 +117,6 @@
       border-bottom: none;
       color: #ffeb3b;
     }
-    /* ガチャ演出エリア */
     .ticket-display {
       font-size: 18px;
       font-weight: bold;
@@ -136,13 +135,37 @@
       min-height: 50px;
       text-align: left;
     }
-    .rarity-lr { color: #ff3366; font-weight: bold; font-size: 20px; text-shadow: 0 0 10px #ff0055; }
-    .rarity-ur { color: #ffeb3b; font-weight: bold; font-size: 18px; }
+    
+    /* レア度スタイル */
+    .rarity-omega { color: #00ffff; font-weight: bold; font-size: 22px; text-shadow: 0 0 12px #00ffff, 0 0 20px #ffffff; }
+    .rarity-urplus { color: #ff00ff; font-weight: bold; font-size: 20px; text-shadow: 0 0 10px #ff00ff; }
+    .rarity-lr { color: #ff3366; font-weight: bold; font-size: 19px; text-shadow: 0 0 8px #ff0055; }
+    .rarity-ur { color: #ffeb3b; font-weight: bold; font-size: 17px; }
     .rarity-ssr { color: #e040fb; font-weight: bold; }
     .rarity-sr { color: #00e676; font-weight: bold; }
     .rarity-r { color: #ffffff; }
 
-    /* LR虹色演出アニメーション */
+    /* 確率表のスタイル */
+    .prob-table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .prob-table th, .prob-table td {
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+    .prob-table th {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffeb3b;
+    }
+
+    /* 虹色・発光アニメーション */
     @keyframes rainbow {
       0% { background-color: #ff0000; }
       20% { background-color: #ff9900; }
@@ -151,9 +174,7 @@
       80% { background-color: #8800cc; }
       100% { background-color: #ff0000; }
     }
-    .rainbow-bg {
-      animation: rainbow 0.5s infinite;
-    }
+    .rainbow-bg { animation: rainbow 0.3s infinite; }
   </style>
 </head>
 <body>
@@ -237,6 +258,51 @@
       <button class="btn gacha-10-btn" onclick="drawGacha(10)">10連ガチャ (10枚)</button>
 
       <div id="gacha-result" class="gacha-result-box" style="display: none;"></div>
+
+      <!-- ガチャ排出率一覧表 -->
+      <p style="font-weight: bold; font-size: 15px; margin: 30px 0 5px 0; color: #ffeb3b;">📊 ガチャ提供割合（排出率）</p>
+      <table class="prob-table">
+        <tr>
+          <th>レア度</th>
+          <th>名称</th>
+          <th>排出率</th>
+        </tr>
+        <tr>
+          <td class="rarity-omega">Ω</td>
+          <td>？？？</td>
+          <td>0.01%</td>
+        </tr>
+        <tr>
+          <td class="rarity-urplus">UR+</td>
+          <td>暇を極めし者</td>
+          <td>0.05%</td>
+        </tr>
+        <tr>
+          <td class="rarity-lr">LR</td>
+          <td>伝説の暇人</td>
+          <td>0.1%</td>
+        </tr>
+        <tr>
+          <td class="rarity-ur">UR</td>
+          <td>冷凍みかん</td>
+          <td>1.0%</td>
+        </tr>
+        <tr>
+          <td class="rarity-ssr">SSR</td>
+          <td>フローズンパイン</td>
+          <td>5.0%</td>
+        </tr>
+        <tr>
+          <td class="rarity-sr">SR</td>
+          <td>チョコバナナ</td>
+          <td>20.0%</td>
+        </tr>
+        <tr>
+          <td class="rarity-r">R</td>
+          <td>冷凍パイン</td>
+          <td>73.84%</td>
+        </tr>
+      </table>
     </div>
   </div>
 
@@ -244,7 +310,7 @@
     // --- チケットの初期化・保存処理 ---
     let tickets = localStorage.getItem('gachaTickets');
     if (tickets === null) {
-      tickets = 3; // 初回プレゼント3枚
+      tickets = 3;
       localStorage.setItem('gachaTickets', tickets);
     } else {
       tickets = parseInt(tickets);
@@ -363,39 +429,55 @@
       resultDiv.style.display = "block";
       resultDiv.innerHTML = "🎰 ガチャを回中... 🎰";
 
-      let hasLR = false;
+      let hasSpecial = false;
+      let specialMsg = "";
       let resultsHtml = "";
 
       setTimeout(() => {
         for (let i = 0; i < times; i++) {
           const rand = Math.random() * 100; // 0.0 ~ 99.999...
 
-          if (rand < 0.1) {
+          if (rand < 0.01) {
+            // 0.01% Ω
+            resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
+            hasSpecial = true;
+            specialMsg = "😱😱😱【1/10000の神神神引き】最高レア度『Ω お前は一体何者なんだ』が降臨しました！！！奇跡！！😱😱😱";
+          } else if (rand < 0.06) {
+            // 0.05% UR+
+            resultsHtml += `<div class="rarity-urplus">⚡ 【UR+】 暇を極めし者 ⚡</div>`;
+            if (!hasSpecial) {
+              hasSpecial = true;
+              specialMsg = "🔥🔥【1/2000の超神引き】UR+『暇を極めし者』が出ました！！凄すぎる！！🔥🔥";
+            }
+          } else if (rand < 0.16) {
             // 0.1% LR
             resultsHtml += `<div class="rarity-lr">🌈 【LR】 伝説の暇人 🌈</div>`;
-            hasLR = true;
-          } else if (rand < 1.1) {
+            if (!hasSpecial) {
+              hasSpecial = true;
+              specialMsg = "🎉🎉🎉【神引き】0.1%の奇跡！LR「伝説の暇人」降臨！！🎉🎉🎉";
+            }
+          } else if (rand < 1.16) {
             // 1.0% UR
             resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷凍みかん ✨</div>`;
-          } else if (rand < 6.1) {
+          } else if (rand < 6.16) {
             // 5.0% SSR
             resultsHtml += `<div class="rarity-ssr">🌟 【SSR】 フローズンパイン 🌟</div>`;
-          } else if (rand < 26.1) {
+          } else if (rand < 26.16) {
             // 20.0% SR
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
-            // 73.9% R
+            // 73.84% R
             resultsHtml += `<div class="rarity-r">🍍 【R】 冷凍パイン</div>`;
           }
         }
 
         resultDiv.innerHTML = resultsHtml;
 
-        // LRが出た時の虹色演出
-        if (hasLR) {
+        // 大当たり時の画面ピカピカ演出
+        if (hasSpecial) {
           const mainContainer = document.getElementById('main-container');
           mainContainer.classList.add('rainbow-bg');
-          alert("🎉🎉🎉【神引き】0.1%の奇跡！LR「伝説の暇人」降臨！！🎉🎉🎉");
+          alert(specialMsg);
           setTimeout(() => {
             mainContainer.classList.remove('rainbow-bg');
           }, 4000);

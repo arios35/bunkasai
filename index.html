@@ -31,8 +31,19 @@
       font-size: 14px;
       line-height: 1.6;
     }
+    .access-counter {
+      font-size: 13px;
+      font-weight: bold;
+      color: #a3e635;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 14px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 5px;
+      border: 1px solid #a3e635;
+    }
     .box {
-      margin-top: 50px;
+      margin-top: 40px;
       padding-top: 35px;
       border-top: 1px dashed rgba(255, 255, 255, 0.4);
     }
@@ -187,6 +198,11 @@
   <div class="container" id="main-container">
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
     <p>QRコードを読み取ってくれてありがとう！</p>
+    
+    <!-- 全員共通のリアルタイム累計アクセスカウンター -->
+    <div class="access-counter">
+      👀 累計来場者数: <span id="total-visits">読み込み中...</span> 人目！
+    </div>
 
     <!-- メニュー -->
     <div class="box">
@@ -194,7 +210,7 @@
       <div class="menu-container">
         <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
         <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
-        <div class="menu-item"><span>🍍 冷冷凍パイン</span><span>300円</span></div>
+        <div class="menu-item"><span>🍍 冷凍パイン</span><span>300円</span></div>
         <div class="menu-item"><span>🍧 フローズンパイン</span><span>300円 <span class="sold-out">【SOLD OUT】</span></span></div>
         <div class="menu-item"><span>😊 スマイル</span><span>0円</span></div>
       </div>
@@ -312,6 +328,20 @@
   </div>
 
   <script>
+    // --- 全員共通のアクセスカウント処理 (CounterAPI利用) ---
+    fetch('https://api.counterapi.dev/v1/class36_bunkasai/visits/up')
+      .then(response => response.json())
+      .then(data => {
+        if(data && data.count) {
+          document.getElementById('total-visits').innerText = data.count;
+        } else {
+          document.getElementById('total-visits').innerText = "1";
+        }
+      })
+      .catch(() => {
+        document.getElementById('total-visits').innerText = "1+";
+      });
+
     // --- チケットの初期化・保存処理 ---
     let tickets = localStorage.getItem('gachaTickets');
     if (tickets === null) {
@@ -472,7 +502,7 @@
           } else if (rand < 26.16) {
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
-            resultsHtml += `<div class="rarity-r">🍍 【R】 冷凍パイン</div>`;
+            resultsHtml += `<div class="rarity-r">🍍 【R】 冷冷凍パイン</div>`;
           }
         }
 

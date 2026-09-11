@@ -104,22 +104,22 @@
       margin-top: 10px;
     }
     
-    /* 巨大化した連打ボタン */
+    /* 超巨大化した連打ボタン */
     .game-btn {
       background-color: #e91e63;
-      width: 90%;
-      max-width: 320px;
-      height: 90px;
-      font-size: 24px;
+      width: 95%;
+      max-width: 360px;
+      height: 110px;
+      font-size: 30px;
       font-weight: 900;
-      border-radius: 20px;
+      border-radius: 25px;
       margin-top: 15px;
-      box-shadow: 0 8px 0 #b01244, 0 12px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 0 #b01244, 0 15px 25px rgba(0,0,0,0.5);
       transition: all 0.05s;
     }
     .game-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 2px 0 #b01244, 0 4px 10px rgba(0,0,0,0.4);
+      transform: translateY(8px);
+      box-shadow: 0 2px 0 #b01244, 0 5px 10px rgba(0,0,0,0.4);
     }
     .game-btn:disabled {
       background-color: #888;
@@ -190,7 +190,7 @@
       text-align: left;
     }
     
-    /* レア度スタイル（文字崩れ防止でサイズ調整＆改行無効） */
+    /* レア度スタイル */
     .rarity-god {
       color: #ffff00;
       font-weight: bold;
@@ -245,6 +245,13 @@
       50% { background-color: #1b4332; filter: brightness(1); }
       100% { background-color: #ff007f; filter: brightness(1.5); }
     }
+    @keyframes god-hyper {
+      0% { background-color: #ffff00; transform: scale(1); }
+      25% { background-color: #ff0000; transform: scale(1.02); }
+      50% { background-color: #00ffff; transform: scale(0.98); }
+      75% { background-color: #ff00ff; transform: scale(1.02); }
+      100% { background-color: #ffff00; transform: scale(1); }
+    }
     @keyframes himajin-enter {
       0% { background-color: #7928ca; filter: brightness(2); }
       50% { background-color: #ff007f; filter: brightness(2); }
@@ -252,6 +259,7 @@
     }
     .rainbow-bg { animation: rainbow 0.3s infinite; }
     .omega-bg { animation: omega-flash 0.2s infinite; }
+    .god-bg { animation: god-hyper 0.08s infinite; }
     .himajin-bg { animation: himajin-enter 0.2s 10; }
 
     /* 全画面オーバーレイ */
@@ -259,7 +267,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0.85);
       z-index: 9999;
       justify-content: center;
       align-items: center;
@@ -269,11 +277,11 @@
       box-sizing: border-box;
       overflow: hidden;
     }
-    #god-overlay {
+    #fireworks-overlay {
       color: #ffff00;
       text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000;
     }
-    #god-overlay h2 {
+    #fireworks-overlay h2 {
       font-size: 36px;
       margin: 15px 0;
       animation: pulse 0.3s infinite;
@@ -304,12 +312,12 @@
 </head>
 <body>
 
-  <!-- GOD専用ド派手＆エモい花火オーバーレイ -->
-  <div id="god-overlay" class="overlay" onclick="closeOverlay('god-overlay')">
+  <!-- 花火演出オーバーレイ（GOD / ∞ 兼用） -->
+  <div id="fireworks-overlay" class="overlay" onclick="closeOverlay('fireworks-overlay')">
     <canvas id="fireworks-canvas"></canvas>
-    <p style="font-size: 20px; color: #fff; margin: 0;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
-    <h2>⚡ GOD 暇人の神 ⚡</h2>
-    <p style="font-size: 18px; color: #fff; margin-top: 15px;">【1/100,000】全人類の頂点に到達！！</p>
+    <p id="fw-sub-title" style="font-size: 20px; color: #fff; margin: 0;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
+    <h2 id="fw-main-title">⚡ GOD 暇人の神 ⚡</h2>
+    <p id="fw-desc" style="font-size: 18px; color: #fff; margin-top: 15px;">【1/100,000】全人類の頂点に到達！！</p>
     <p style="font-size: 13px; color: #aaa; margin-top: 40px;">（タップして閉じる）</p>
   </div>
 
@@ -401,7 +409,7 @@
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
       <div id="score" style="font-size: 24px; font-weight: bold; color: #ffeb3b; margin: 10px 0;">スコア: 0回</div>
       
-      <!-- 巨大連打ボタン -->
+      <!-- 超巨大連打ボタン -->
       <button id="tap-btn" class="btn game-btn" onclick="tapGame()">タップしてスタート！</button>
       <div id="game-result"></div>
     </div>
@@ -504,7 +512,7 @@
 
     function closeOverlay(id) {
       document.getElementById(id).style.display = 'none';
-      if (id === 'god-overlay') {
+      if (id === 'fireworks-overlay') {
         stopFireworks();
       }
     }
@@ -559,7 +567,7 @@
       document.getElementById('row-inf').style.display = 'table-row';
       document.getElementById('row-omegaplus').style.display = 'table-row';
       document.getElementById('r-prob').innerText = "73.826%";
-      document.getElementById('game-info-text').innerText = "（100回:50枚 / 150回:100枚 / 200回:300枚 / 250回:777枚）";
+      document.getElementById('game-info-text').innerText = "（100回:50枚 / 130回:100枚 / 160回:200枚 / 200回:500枚）";
 
       const mainContainer = document.getElementById('main-container');
       mainContainer.classList.add('himajin-bg');
@@ -609,17 +617,17 @@
               enableDevMode();
               rank = "🛠️ 開発者モードに切り替わりました！（LR以上確定）";
             } else {
-              if (count >= 250) {
-                rank = "🌌 250回達成!? 人間を超越した【連打ゴッド】！！";
-                earnedTickets = 777;
-              } else if (count >= 200) {
-                rank = "👑 200回達成!! まさに【連打の神】降臨！！";
-                earnedTickets = 300;
-              } else if (count >= 150) {
-                rank = "🔥 150回達成!! 【超連打マスター】爆誕！";
+              if (count >= 200) {
+                rank = "👑 200回達成!! まさに【連打の神】限界達成！！";
+                earnedTickets = 500;
+              } else if (count >= 160) {
+                rank = "🔥 160回達成!! 【超人連打マスター】爆誕！";
+                earnedTickets = 200;
+              } else if (count >= 130) {
+                rank = "⚡ 130回達成! 超絶スピード！";
                 earnedTickets = 100;
               } else if (count >= 100) {
-                rank = "✨ 100回達成! 超絶プレイ！";
+                rank = "✨ 100回達成! かなり早い！";
                 earnedTickets = 50;
               } else if (count >= 70) {
                 rank = "⚡ 超人レベル！指から光出てる！";
@@ -670,7 +678,7 @@
       resultDiv.style.display = "block";
       resultDiv.innerHTML = "🎰 ガチャを回中... 🎰";
 
-      let maxRarityLevel = 0; // 0:なし, 1:LR/UR+, 2:Ω/Ω+/∞, 3:GOD
+      let maxRarityLevel = 0; // 0:なし, 1:LR/UR+, 2:Ω/Ω+, 3:∞, 4:GOD
       let specialMsg = "";
       let resultsHtml = "";
 
@@ -682,12 +690,11 @@
             const devRand = Math.random();
             if (devRand < 0.10) {
               resultsHtml += `<div class="rarity-god">⚡⚡【GOD】 暇人の神 ⚡⚡</div>`;
-              maxRarityLevel = 3;
+              maxRarityLevel = 4;
               if (!unlocked.god) { unlocked.god = true; document.getElementById('name-god').innerText = "暇人の神 【NEW!】"; }
             } else if (devRand < 0.25) {
               resultsHtml += `<div class="rarity-inf">💫 【∞】 超越者 💫</div>`;
-              if (maxRarityLevel < 2) maxRarityLevel = 2;
-              if (!specialMsg) specialMsg = "🌟🌟【1/20000の超引き】レア度『∞ 超越者』降臨！！🌟🌟";
+              if (maxRarityLevel < 3) maxRarityLevel = 3;
               if (!unlocked.inf) { unlocked.inf = true; document.getElementById('name-inf').innerText = "超越者 【NEW!】"; }
             } else if (devRand < 0.45) {
               resultsHtml += `<div class="rarity-omegaplus">👑 【Ω+】 誇れ。オマエは暇人だ。 👑</div>`;
@@ -711,12 +718,11 @@
           } else {
             if (isHimajinMode && rand < 0.001) {
               resultsHtml += `<div class="rarity-god">⚡⚡【GOD】 暇人の神 ⚡⚡</div>`;
-              maxRarityLevel = 3;
+              maxRarityLevel = 4;
               if (!unlocked.god) { unlocked.god = true; document.getElementById('name-god').innerText = "暇人の神 【NEW!】"; }
             } else if (isHimajinMode && rand < 0.006) {
               resultsHtml += `<div class="rarity-inf">💫 【∞】 超越者 💫</div>`;
-              if (maxRarityLevel < 2) maxRarityLevel = 2;
-              if (!specialMsg) specialMsg = "🌟🌟【1/20000の超引き】レア度『∞ 超越者』降臨！！🌟🌟";
+              if (maxRarityLevel < 3) maxRarityLevel = 3;
               if (!unlocked.inf) { unlocked.inf = true; document.getElementById('name-inf').innerText = "超越者 【NEW!】"; }
             } else if (isHimajinMode && rand < 0.014) {
               resultsHtml += `<div class="rarity-omegaplus">👑 【Ω+】 誇れ。オマエは暇人だ。 👑</div>`;
@@ -737,7 +743,7 @@
               if (maxRarityLevel < 1) maxRarityLevel = 1;
               if (!specialMsg) specialMsg = "🎉【大当り】LR「伝説の暇人」降臨！！🎉";
             } else if (rand < (isHimajinMode ? 1.174 : 1.16)) {
-              resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷冷凍みかん ✨</div>`;
+              resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷凍みかん ✨</div>`;
             } else if (rand < (isHimajinMode ? 6.174 : 6.16)) {
               resultsHtml += `<div class="rarity-ssr">🌟 【SSR】 フローズンパイン 🌟</div>`;
             } else if (rand < (isHimajinMode ? 26.174 : 26.16)) {
@@ -752,11 +758,30 @@
 
         const mainContainer = document.getElementById('main-container');
 
-        // 長尺演出判定
-        if (maxRarityLevel === 3) {
-          // GOD演出：花火打ち上げエフェクト
-          document.getElementById('god-overlay').style.display = 'flex';
-          startFireworks();
+        // 長尺ド派手演出判定
+        if (maxRarityLevel === 4) {
+          // GOD演出：画面フラッシュ ＋ 30秒ド派手花火
+          document.getElementById('fw-sub-title').innerText = "🎉🎉🎉 奇跡降臨 🎉🎉🎉";
+          document.getElementById('fw-main-title').innerText = "⚡ GOD 暇人の神 ⚡";
+          document.getElementById('fw-desc').innerText = "【1/100,000】全人類の頂点に到達！！";
+          
+          document.getElementById('fireworks-overlay').style.display = 'flex';
+          mainContainer.classList.add('god-bg');
+          startFireworks(30);
+
+          setTimeout(() => {
+            mainContainer.classList.remove('god-bg');
+          }, 30000);
+
+        } else if (maxRarityLevel === 3) {
+          // ∞演出：12秒ド派手花火
+          document.getElementById('fw-sub-title').innerText = "🌟🌟🌟 超越降臨 🌟🌟🌟";
+          document.getElementById('fw-main-title').innerText = "💫 【∞】 超越者 💫";
+          document.getElementById('fw-desc').innerText = "【1/20,000】次元を超越した暇人！！";
+
+          document.getElementById('fireworks-overlay').style.display = 'flex';
+          startFireworks(12);
+
         } else if (maxRarityLevel === 2) {
           // Ω系演出：8秒間フラッシュ
           mainContainer.classList.add('omega-bg');
@@ -776,42 +801,51 @@
       }, 500);
     }
 
-    // --- GOD花火アニメーション処理 ---
+    // --- ド派手花火アニメーション処理 ---
     let fireworksAnimId = null;
-    function startFireworks() {
+    let fireworksTimeoutId = null;
+
+    function startFireworks(durationSec) {
+      stopFireworks(); // 重複防止
+
       const canvas = document.getElementById('fireworks-canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
       let particles = [];
-      const colors = ['#ffff00', '#ff007f', '#00ffff', '#00ffcc', '#ff9800', '#ffffff'];
+      const colors = ['#ffff00', '#ff007f', '#00ffff', '#00ffcc', '#ff9800', '#ffffff', '#ff0000', '#76ff03'];
 
-      function createFirework() {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * (canvas.height * 0.6);
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        for (let i = 0; i < 50; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 5 + 1;
-          particles.push({
-            x: x, y: y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            alpha: 1,
-            color: color,
-            size: Math.random() * 3 + 2
-          });
+      function createFireworkCluster() {
+        // 一度に5発の爆発を同時生成（超ド派手）
+        for (let k = 0; k < 5; k++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * (canvas.height * 0.7);
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          
+          for (let i = 0; i < 60; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 8 + 2;
+            particles.push({
+              x: x, y: y,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              alpha: 1,
+              color: color,
+              size: Math.random() * 4 + 2
+            });
+          }
         }
       }
 
       let timer = 0;
       function animate() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (timer % 15 === 0) {
-          createFirework();
+        // 毎フレームに近い高頻度で花火連打発射
+        if (timer % 3 === 0) {
+          createFireworkCluster();
         }
         timer++;
 
@@ -819,8 +853,8 @@
           let p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.05; // 重力
-          p.alpha -= 0.015;
+          p.vy += 0.06; // 重力
+          p.alpha -= 0.012;
 
           if (p.alpha <= 0) {
             particles.splice(i, 1);
@@ -836,12 +870,21 @@
         fireworksAnimId = requestAnimationFrame(animate);
       }
       animate();
+
+      // 指定秒数後に自動停止
+      fireworksTimeoutId = setTimeout(() => {
+        stopFireworks();
+      }, durationSec * 1000);
     }
 
     function stopFireworks() {
       if (fireworksAnimId) {
         cancelAnimationFrame(fireworksAnimId);
         fireworksAnimId = null;
+      }
+      if (fireworksTimeoutId) {
+        clearTimeout(fireworksTimeoutId);
+        fireworksTimeoutId = null;
       }
     }
   </script>

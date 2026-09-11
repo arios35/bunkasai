@@ -12,6 +12,7 @@
       text-align: center;
       padding: 30px 15px 60px 15px;
       margin: 0;
+      overflow-x: hidden;
     }
     .container {
       max-width: 400px;
@@ -21,6 +22,7 @@
       padding: 30px 15px;
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      position: relative;
     }
     h1 {
       color: #ffeb3b;
@@ -145,11 +147,6 @@
       border-bottom: none;
       color: #ffeb3b;
     }
-    .sold-out {
-      color: #ff5252;
-      font-weight: bold;
-      margin-left: 8px;
-    }
     .ticket-display {
       font-size: 18px;
       font-weight: bold;
@@ -170,7 +167,7 @@
     }
     
     /* レア度スタイル */
-    .rarity-god { color: #ffff00; font-weight: bold; font-size: 26px; text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff; animation: pulse 0.8s infinite; }
+    .rarity-god { color: #ffff00; font-weight: bold; font-size: 26px; text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff; animation: pulse 0.5s infinite; }
     .rarity-inf { color: #ff0055; font-weight: bold; font-size: 24px; text-shadow: 0 0 12px #ff0055, 0 0 20px #ffffff; }
     .rarity-omegaplus { color: #00ffcc; font-weight: bold; font-size: 23px; text-shadow: 0 0 12px #00ffcc; }
     .rarity-omega { color: #00ffff; font-weight: bold; font-size: 22px; text-shadow: 0 0 12px #00ffff; }
@@ -201,7 +198,7 @@
       color: #ffeb3b;
     }
 
-    /* 虹色・発光アニメーション */
+    /* 演出用アニメーション */
     @keyframes rainbow {
       0% { background-color: #ff0000; }
       20% { background-color: #ff9900; }
@@ -210,10 +207,51 @@
       80% { background-color: #8800cc; }
       100% { background-color: #ff0000; }
     }
+    @keyframes omega-flash {
+      0% { background-color: #00ffff; filter: brightness(2); }
+      50% { background-color: #1b4332; filter: brightness(1); }
+      100% { background-color: #ff007f; filter: brightness(2); }
+    }
+    @keyframes god-hyper {
+      0% { background-color: #ffff00; transform: scale(1); }
+      25% { background-color: #ff0000; transform: scale(1.02); }
+      50% { background-color: #00ffff; transform: scale(0.98); }
+      75% { background-color: #ff00ff; transform: scale(1.02); }
+      100% { background-color: #ffff00; transform: scale(1); }
+    }
     .rainbow-bg { animation: rainbow 0.3s infinite; }
+    .omega-bg { animation: omega-flash 0.15s infinite; }
+    .god-bg { animation: god-hyper 0.08s infinite; }
+
+    /* GOD確定オーバーレイ */
+    #god-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #ffff00;
+      text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000;
+    }
+    #god-overlay h2 {
+      font-size: 40px;
+      margin: 0;
+      animation: pulse 0.2s infinite;
+    }
   </style>
 </head>
 <body>
+
+  <!-- GOD専用ド派手オーバーレイ -->
+  <div id="god-overlay" onclick="closeGodOverlay()">
+    <p style="font-size: 20px; color: #fff;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
+    <h2>⚡ GOD 暇人の神 ⚡</h2>
+    <p style="font-size: 18px; color: #fff; margin-top: 20px;">【1/100,000】全人類の頂点に到達！！</p>
+    <p style="font-size: 12px; color: #aaa; margin-top: 30px;">（タップして閉じる）</p>
+  </div>
 
   <div class="container" id="main-container">
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
@@ -236,7 +274,7 @@
         <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
         <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
         <div class="menu-item"><span>🍍 冷凍パイン</span><span>300円</span></div>
-        <div class="menu-item"><span>🍧 フローズンパイン</span><span>300円 <span class="sold-out">【SOLD OUT】</span></span></div>
+        <div class="menu-item"><span>🍧 フローズンパイン</span><span>300円</span></div>
         <div class="menu-item"><span>😊 スマイル</span><span>0円</span></div>
       </div>
     </div>
@@ -351,7 +389,7 @@
   </div>
 
   <script>
-    // --- 全員共通のアクセスカウント処理 ---
+    // --- アクセスカウント ---
     fetch('https://api.counterapi.dev/v1/class36_bunkasai/visits/up')
       .then(response => response.json())
       .then(data => {
@@ -365,7 +403,7 @@
         document.getElementById('total-visits').innerText = "1+";
       });
 
-    // --- チケットの初期化・保存処理 ---
+    // --- チケット管理 ---
     let tickets = localStorage.getItem('gachaTickets');
     if (tickets === null) {
       tickets = 5;
@@ -416,7 +454,7 @@
       }
     }
 
-    // --- 連打ゲーム & 暇人モードフラグ ---
+    // --- 連打ゲーム ---
     let isHimajinMode = false;
     let count = 0;
     let timeLeft = 10;
@@ -459,7 +497,6 @@
             let rank = "";
             let earnedTickets = 0;
 
-            // 暇人モード解放判定：1タップのまま制限時間終了
             if (count === 1 && !isHimajinMode) {
               enableHimajinMode();
               rank = "⚡ 限界突破！！【暇人モード】が発動した！<br>連打時間20秒UP＆ガチャに「裏レア」追加！！";
@@ -489,7 +526,6 @@
 
             document.getElementById('game-result').innerHTML = rank;
 
-            // クールタイム（通常5秒 / 暇人モード時3秒）
             const coolTime = isHimajinMode ? 3000 : 5000;
             setTimeout(() => {
               btn.disabled = false;
@@ -503,7 +539,11 @@
       }
     }
 
-    // --- 3-6 ガチャ ---
+    // --- ガチャとドーパミン全開演出 ---
+    function closeGodOverlay() {
+      document.getElementById('god-overlay').style.display = 'none';
+    }
+
     function drawGacha(times) {
       if (tickets < times) {
         alert("ガチャチケットが足りません！\n連打ゲームでチケットを集めてね！");
@@ -516,7 +556,7 @@
       resultDiv.style.display = "block";
       resultDiv.innerHTML = "🎰 ガチャを回中... 🎰";
 
-      let hasSpecial = false;
+      let maxRarityLevel = 0; // 0:なし, 1:LR/UR+, 2:Ω/Ω+/∞, 3:GOD
       let specialMsg = "";
       let resultsHtml = "";
 
@@ -526,38 +566,27 @@
 
           if (isHimajinMode && rand < 0.001) {
             resultsHtml += `<div class="rarity-god">⚡⚡【GOD】 暇人の神 ⚡⚡</div>`;
-            hasSpecial = true;
-            specialMsg = "🌌🌌🌌【1/100000の奇跡】GOD『暇人の神』が降臨！！！全人類の頂点に立ちました！！！🌌🌌🌌";
+            maxRarityLevel = 3;
           } else if (isHimajinMode && rand < 0.006) {
             resultsHtml += `<div class="rarity-inf">💫 【∞】 超越者 💫</div>`;
-            if (!hasSpecial) {
-              hasSpecial = true;
-              specialMsg = "🌟🌟🌟【1/20000の超引き】レア度『∞ 超越者』が出ました！！もはや人間ではありません！！🌟🌟🌟";
-            }
+            if (maxRarityLevel < 2) maxRarityLevel = 2;
+            if (!specialMsg) specialMsg = "🌟🌟【1/20000の超引き】レア度『∞ 超越者』降臨！！🌟🌟";
           } else if (isHimajinMode && rand < 0.014) {
             resultsHtml += `<div class="rarity-omegaplus">👑 【Ω+】 誇れ。オマエは暇人だ。 👑</div>`;
-            if (!hasSpecial) {
-              hasSpecial = true;
-              specialMsg = "🔥🔥🔥【超激レア】Ω+『誇れ。オマエは暇人だ。』を獲得！！胸を張れ！！🔥🔥🔥";
-            }
+            if (maxRarityLevel < 2) maxRarityLevel = 2;
+            if (!specialMsg) specialMsg = "🔥🔥【裏激レア】Ω+『誇れ。オマエは暇人だ。』を獲得！！🔥🔥";
           } else if (rand < (isHimajinMode ? 0.024 : 0.01)) {
             resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
-            if (!hasSpecial) {
-              hasSpecial = true;
-              specialMsg = "😱😱😱【1/10000の神引き】最高レア度『Ω お前は一体何者なんだ』が降臨しました！！！😱😱😱";
-            }
+            if (maxRarityLevel < 2) maxRarityLevel = 2;
+            if (!specialMsg) specialMsg = "😱😱【神引き】最高レア度『Ω お前は一体何者なんだ』が降臨！！！😱😱";
           } else if (rand < (isHimajinMode ? 0.074 : 0.06)) {
             resultsHtml += `<div class="rarity-urplus">⚡ 【UR+】 暇を極めし者 ⚡</div>`;
-            if (!hasSpecial) {
-              hasSpecial = true;
-              specialMsg = "🔥🔥【超神引き】UR+『暇を極めし者』が出ました！！凄すぎる！！🔥🔥";
-            }
+            if (maxRarityLevel < 1) maxRarityLevel = 1;
+            if (!specialMsg) specialMsg = "✨【大当り】UR+『暇を極めし者』が出ました！！✨";
           } else if (rand < (isHimajinMode ? 0.174 : 0.16)) {
             resultsHtml += `<div class="rarity-lr">🌈 【LR】 伝説の暇人 🌈</div>`;
-            if (!hasSpecial) {
-              hasSpecial = true;
-              specialMsg = "🎉🎉🎉【神引き】LR「伝説の暇人」降臨！！🎉🎉🎉";
-            }
+            if (maxRarityLevel < 1) maxRarityLevel = 1;
+            if (!specialMsg) specialMsg = "🎉【大当り】LR「伝説の暇人」降臨！！🎉";
           } else if (rand < (isHimajinMode ? 1.174 : 1.16)) {
             resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷凍みかん ✨</div>`;
           } else if (rand < (isHimajinMode ? 6.174 : 6.16)) {
@@ -565,20 +594,38 @@
           } else if (rand < (isHimajinMode ? 26.174 : 26.16)) {
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
-            resultsHtml += `<div class="rarity-r">🍍 【R】 冷冷凍パイン</div>`;
+            resultsHtml += `<div class="rarity-r">🍍 【R】 冷凍パイン</div>`;
           }
         }
 
         resultDiv.innerHTML = resultsHtml;
 
-        if (hasSpecial) {
-          const mainContainer = document.getElementById('main-container');
+        const mainContainer = document.getElementById('main-container');
+
+        // レア度別のド派手演出判定
+        if (maxRarityLevel === 3) {
+          // --- GOD演出：ドーパミン全開 ---
+          document.getElementById('god-overlay').style.display = 'flex';
+          mainContainer.classList.add('god-bg');
+          setTimeout(() => {
+            mainContainer.classList.remove('god-bg');
+          }, 6000);
+        } else if (maxRarityLevel === 2) {
+          // --- Ω / Ω+ / ∞ 演出：超激しいフラッシュ ---
+          mainContainer.classList.add('omega-bg');
+          alert(specialMsg);
+          setTimeout(() => {
+            mainContainer.classList.remove('omega-bg');
+          }, 4500);
+        } else if (maxRarityLevel === 1) {
+          // --- LR / UR+ 演出：虹色点滅 ---
           mainContainer.classList.add('rainbow-bg');
           alert(specialMsg);
           setTimeout(() => {
             mainContainer.classList.remove('rainbow-bg');
-          }, 4000);
+          }, 3000);
         }
+
       }, 500);
     }
   </script>

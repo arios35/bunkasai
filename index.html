@@ -196,13 +196,18 @@
     .rarity-god {
       color: #ffff00;
       font-weight: bold;
-      font-size: 18px;
-      text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff;
+      font-size: 20px;
+      text-shadow: 0 0 15px #ffff00, 0 0 30px #ff0000, 0 0 45px #ffffff;
       white-space: nowrap;
-      animation: pulse 0.4s infinite;
+      animation: god-text-bounce 0.15s infinite alternate;
       text-align: center;
       margin: 8px 0;
     }
+    @keyframes god-text-bounce {
+      0% { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1.15) rotate(2deg); }
+    }
+
     .rarity-inf { color: #ff0055; font-weight: bold; font-size: 18px; text-shadow: 0 0 12px #ff0055, 0 0 20px #ffffff; white-space: nowrap; margin: 6px 0; }
     .rarity-omegaplus { color: #00ffcc; font-weight: bold; font-size: 17px; text-shadow: 0 0 12px #00ffcc; white-space: nowrap; margin: 6px 0; }
     .rarity-omega { color: #00ffff; font-weight: bold; font-size: 17px; text-shadow: 0 0 12px #00ffff; white-space: nowrap; margin: 6px 0; }
@@ -248,19 +253,26 @@
       100% { background-color: #ff007f; filter: brightness(1.5); }
     }
     
-    /* ⚡ GOD超極悪ドパドパ演出（爆速点滅 ＋ 激しい画面振動） ⚡ */
+    /* ⚡ GOD超極悪ドパドパ演出（激超画面振動） ⚡ */
     @keyframes god-hyper-vibe {
-      0% { background-color: #ffff00; transform: translate(0, 0) scale(1); }
-      10% { background-color: #ff0000; transform: translate(-8px, 6px) scale(1.03); }
-      20% { background-color: #00ffff; transform: translate(8px, -6px) scale(0.97); }
-      30% { background-color: #ff00ff; transform: translate(-6px, -6px) scale(1.04); }
-      40% { background-color: #00ff00; transform: translate(6px, 8px) scale(0.96); }
-      50% { background-color: #ffffff; transform: translate(-8px, 4px) scale(1.05); }
-      60% { background-color: #ff9800; transform: translate(8px, -4px) scale(0.95); }
-      70% { background-color: #7928ca; transform: translate(-4px, 8px) scale(1.03); }
-      80% { background-color: #ff0000; transform: translate(6px, -8px) scale(0.97); }
-      90% { background-color: #00ffff; transform: translate(-6px, 4px) scale(1.02); }
-      100% { background-color: #ffff00; transform: translate(0, 0) scale(1); }
+      0% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-25px, 20px) rotate(-3deg); }
+      20% { transform: translate(25px, -20px) rotate(3deg); }
+      30% { transform: translate(-30px, -15px) rotate(-4deg); }
+      40% { transform: translate(30px, 25px) rotate(4deg); }
+      50% { transform: translate(-35px, 10px) rotate(-5deg); }
+      60% { transform: translate(35px, -10px) rotate(5deg); }
+      70% { transform: translate(-20px, 30px) rotate(-3deg); }
+      80% { transform: translate(25px, -25px) rotate(3deg); }
+      90% { transform: translate(-30px, 15px) rotate(-2deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* GOD強調アニメーション */
+    @keyframes god-title-shake {
+      0% { transform: scale(1) rotate(-3deg); text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000, 0 0 80px #ffff00; }
+      50% { transform: scale(1.3) rotate(3deg); text-shadow: 0 0 40px #ffffff, 0 0 80px #ff00ff, 0 0 120px #ffff00; }
+      100% { transform: scale(1) rotate(-3deg); text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000, 0 0 80px #ffff00; }
     }
 
     @keyframes himajin-enter {
@@ -270,8 +282,7 @@
     }
     .rainbow-bg { animation: rainbow 0.3s infinite; }
     .omega-bg { animation: omega-flash 0.2s infinite; }
-    .god-bg { animation: god-hyper-vibe 0.04s infinite; } /* 0.04秒の超高速ルーティン */
-    .himajin-bg { animation: himajin-enter 0.2s 10; }
+    .god-bg { animation: god-hyper-vibe 0.03s infinite; } /* 画面全体を超激しく振動 */
 
     /* 全画面カットイン・オーバーレイ */
     .overlay {
@@ -290,14 +301,19 @@
     }
     #cutin-overlay {
       color: #ffff00;
-      text-shadow: 0 0 25px #ffff00, 0 0 50px #ff0000;
       cursor: pointer;
     }
+    #cutin-overlay.god-cutin-active {
+      animation: god-hyper-vibe 0.03s infinite;
+      background: rgba(20, 0, 0, 0.9);
+    }
     #cutin-overlay h2 {
-      font-size: 42px;
-      margin: 15px 0;
-      animation: pulse 0.15s infinite;
+      font-size: 52px;
+      font-weight: 900;
+      margin: 20px 0;
       white-space: nowrap;
+      animation: god-title-shake 0.1s infinite;
+      letter-spacing: 2px;
     }
     #himajin-overlay {
       color: #ff00ff;
@@ -310,7 +326,7 @@
       white-space: nowrap;
     }
 
-    /* 背景固定の花火キャンバス（普通の画面の後ろで打ち上がる） */
+    /* 背景固定の花火キャンバス */
     #bg-fireworks-canvas {
       position: fixed;
       top: 0;
@@ -324,15 +340,15 @@
 </head>
 <body>
 
-  <!-- 背景花火キャンバス（画面最背面で余韻に浸る用） -->
+  <!-- 背景花火キャンバス -->
   <canvas id="bg-fireworks-canvas"></canvas>
 
-  <!-- ドーパミン全開カットイン（タップしたら消えて背景花火に移行） -->
+  <!-- ドーパミン全開カットイン -->
   <div id="cutin-overlay" class="overlay" onclick="closeCutin()">
-    <p id="cutin-sub-title" style="font-size: 26px; color: #fff; margin: 0; font-weight: 900;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
+    <p id="cutin-sub-title" style="font-size: 28px; color: #fff; margin: 0; font-weight: 900; text-shadow: 0 0 10px #ffff00;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
     <h2 id="cutin-main-title">⚡ GOD 暇人の神 ⚡</h2>
-    <p id="cutin-desc" style="font-size: 20px; color: #fff; margin-top: 15px; font-weight: bold;">【1/100,000】全人類の頂点に到達！！</p>
-    <p style="font-size: 15px; color: #fff; margin-top: 50px; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 20px;">（タップして結果を確認する）</p>
+    <p id="cutin-desc" style="font-size: 22px; color: #fff; margin-top: 15px; font-weight: bold; text-shadow: 0 0 10px #ff0000;">【1/100,000】全人類の頂点に到達！！</p>
+    <p style="font-size: 15px; color: #fff; margin-top: 50px; background: rgba(0,0,0,0.8); border: 2px solid #ffff00; padding: 10px 20px; border-radius: 20px; box-shadow: 0 0 15px #ffff00;">（タップして結果を確認する）</p>
   </div>
 
   <!-- 暇人モード突入ド派手オーバーレイ -->
@@ -423,7 +439,7 @@
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
       <div id="score" style="font-size: 24px; font-weight: bold; color: #ffeb3b; margin: 10px 0;">スコア: 0回</div>
       
-      <!-- 「スタート！！」固定の超巨大連打ボタン -->
+      <!-- 超巨大連打ボタン -->
       <button id="tap-btn" class="btn game-btn" onclick="tapGame()">スタート！！</button>
       <div id="game-result"></div>
     </div>
@@ -682,7 +698,7 @@
 
       const resultDiv = document.getElementById('gacha-result');
       resultDiv.style.display = "block";
-      resultDiv.innerHTML = "🎰 ガチャを回中... 🎰";
+      resultDiv.innerHTML = "🎰 ガチャを回転中... 🎰";
 
       let maxRarityLevel = 0; // 0:なし, 1:LR/UR+, 2:Ω/Ω+, 3:∞, 4:GOD
       let specialMsg = "";
@@ -763,27 +779,28 @@
         resultDiv.innerHTML = resultsHtml;
 
         const mainContainer = document.getElementById('main-container');
+        const cutinOverlay = document.getElementById('cutin-overlay');
 
-        // ① 先にドーパミン全開カットイン演出を表示
         if (maxRarityLevel === 4) {
-          // GOD: 画面爆速フラッシュ ＋ ガタガタ激震カットイン
+          // GOD: 超強力全画面シェイク＋GODタイトル極太強調
           document.getElementById('cutin-sub-title').innerText = "🎉🎉🎉 奇跡降臨 🎉🎉🎉";
           document.getElementById('cutin-main-title').innerText = "⚡ GOD 暇人の神 ⚡";
           document.getElementById('cutin-desc').innerText = "【1/100,000】全人類の頂点に到達！！";
           
-          document.getElementById('cutin-overlay').style.display = 'flex';
-          mainContainer.classList.add('god-bg'); // 画面振動＋極彩色高速点滅
+          cutinOverlay.classList.add('god-cutin-active');
+          cutinOverlay.style.display = 'flex';
+          mainContainer.classList.add('god-bg');
           pendingFireworksDuration = 30; // タップしたら30秒花火
 
         } else if (maxRarityLevel === 3) {
-          // ∞: カットイン表示
+          // ∞: 通常振動＋カットイン表示
           document.getElementById('cutin-sub-title').innerText = "🌟🌟🌟 超越降臨 🌟🌟🌟";
           document.getElementById('cutin-main-title').innerText = "💫 【∞】 超越者 💫";
           document.getElementById('cutin-desc').innerText = "【1/20,000】次元を超越した暇人！！";
 
-          document.getElementById('cutin-overlay').style.display = 'flex';
+          cutinOverlay.style.display = 'flex';
           mainContainer.classList.add('god-bg');
-          pendingFireworksDuration = 12; // タップしたら12秒花火
+          pendingFireworksDuration = 12;
 
         } else if (maxRarityLevel === 2) {
           mainContainer.classList.add('omega-bg');
@@ -798,9 +815,11 @@
       }, 500);
     }
 
-    // ② カットインをタップで閉じた後、背景で花火を打ち上げて「余韻」に浸る
+    // ② カットインを閉じる処理
     function closeCutin() {
-      document.getElementById('cutin-overlay').style.display = 'none';
+      const cutinOverlay = document.getElementById('cutin-overlay');
+      cutinOverlay.style.display = 'none';
+      cutinOverlay.classList.remove('god-cutin-active');
       document.getElementById('main-container').classList.remove('god-bg');
 
       if (pendingFireworksDuration > 0) {
@@ -809,7 +828,7 @@
       }
     }
 
-    // --- 普通の量の花火アニメーション（背景で優越感に浸る） ---
+    // --- 背景花火アニメーション ---
     let fireworksAnimId = null;
     let fireworksTimeoutId = null;
 

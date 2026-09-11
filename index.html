@@ -42,6 +42,23 @@
       margin-top: 5px;
       border: 1px solid #a3e635;
     }
+    .himajin-badge {
+      display: none;
+      background: linear-gradient(45deg, #ff007f, #7928ca);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 8px 15px;
+      border-radius: 20px;
+      margin-top: 15px;
+      box-shadow: 0 0 15px #ff007f;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
     .box {
       margin-top: 40px;
       padding-top: 35px;
@@ -153,7 +170,10 @@
     }
     
     /* レア度スタイル */
-    .rarity-omega { color: #00ffff; font-weight: bold; font-size: 22px; text-shadow: 0 0 12px #00ffff, 0 0 20px #ffffff; }
+    .rarity-god { color: #ffff00; font-weight: bold; font-size: 26px; text-shadow: 0 0 15px #ffff00, 0 0 25px #ffffff; animation: pulse 0.8s infinite; }
+    .rarity-inf { color: #ff0055; font-weight: bold; font-size: 24px; text-shadow: 0 0 12px #ff0055, 0 0 20px #ffffff; }
+    .rarity-omegaplus { color: #00ffcc; font-weight: bold; font-size: 23px; text-shadow: 0 0 12px #00ffcc; }
+    .rarity-omega { color: #00ffff; font-weight: bold; font-size: 22px; text-shadow: 0 0 12px #00ffff; }
     .rarity-urplus { color: #ff00ff; font-weight: bold; font-size: 20px; text-shadow: 0 0 10px #ff00ff; }
     .rarity-lr { color: #ff3366; font-weight: bold; font-size: 19px; text-shadow: 0 0 8px #ff0055; }
     .rarity-ur { color: #ffeb3b; font-weight: bold; font-size: 17px; }
@@ -198,10 +218,15 @@
   <div class="container" id="main-container">
     <h1>✨ ようこそ3年6組へ！！ ✨</h1>
     <p>QRコードを読み取ってくれてありがとう！</p>
-    
+
     <!-- 全員共通のリアルタイム累計アクセスカウンター -->
     <div class="access-counter">
       👀 累計来場者数: <span id="total-visits">読み込み中...</span> 人目！
+    </div>
+
+    <!-- 暇人モード通知バッジ -->
+    <div id="himajin-badge" class="himajin-badge">
+      🔥 暇人モード発動中！！（限界突破ガチャ開放中） 🔥
     </div>
 
     <!-- メニュー -->
@@ -255,10 +280,10 @@
       </div>
     </div>
 
-    <!-- 10秒連打ゲーム -->
+    <!-- 連打ゲーム -->
     <div class="box">
-      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🎮 10秒連打チャレンジ！ 🎮</p>
-      <p style="font-size: 13px; margin-bottom: 10px;">10秒間で連打！スコアに応じてガチャ券大量GET！</p>
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🎮 連打チャレンジ！ 🎮</p>
+      <p style="font-size: 13px; margin-bottom: 10px;">スコアに応じてガチャ券大量GET！</p>
       <p style="font-size: 11px; color: #a3e635; margin-bottom: 15px;">（30回:3枚 / 50回:10枚 / 70回:20枚 / 100回:50枚）</p>
       
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
@@ -282,15 +307,13 @@
 
       <!-- ガチャ排出率一覧表 -->
       <p style="font-weight: bold; font-size: 15px; margin: 30px 0 5px 0; color: #ffeb3b;">📊 ガチャ提供割合（排出率）</p>
-      <table class="prob-table">
-        <tr>
-          <th>レア度</th>
-          <th>名称</th>
-          <th>排出率</th>
-        </tr>
+      <table class="prob-table" id="prob-table">
+        <tr id="row-god" style="display: none;"><td class="rarity-god">GOD</td><td>暇人の神</td><td>0.001%</td></tr>
+        <tr id="row-inf" style="display: none;"><td class="rarity-inf">∞</td><td>超越者</td><td>0.005%</td></tr>
+        <tr id="row-omegaplus" style="display: none;"><td class="rarity-omegaplus">Ω+</td><td>誇れ。オマエは暇人だ。</td><td>0.008%</td></tr>
         <tr>
           <td class="rarity-omega">Ω</td>
-          <td>？？？</td>
+          <td id="omega-name">？？？</td>
           <td>0.01%</td>
         </tr>
         <tr>
@@ -321,14 +344,14 @@
         <tr>
           <td class="rarity-r">R</td>
           <td>冷凍パイン</td>
-          <td>73.84%</td>
+          <td id="r-prob">73.84%</td>
         </tr>
       </table>
     </div>
   </div>
 
   <script>
-    // --- 全員共通のアクセスカウント処理 (CounterAPI利用) ---
+    // --- 全員共通のアクセスカウント処理 ---
     fetch('https://api.counterapi.dev/v1/class36_bunkasai/visits/up')
       .then(response => response.json())
       .then(data => {
@@ -393,11 +416,22 @@
       }
     }
 
-    // --- 10秒連打ゲーム ---
+    // --- 連打ゲーム & 暇人モードフラグ ---
+    let isHimajinMode = false;
     let count = 0;
     let timeLeft = 10;
     let timerId = null;
     let isPlaying = false;
+
+    function enableHimajinMode() {
+      isHimajinMode = true;
+      document.getElementById('himajin-badge').style.display = 'block';
+      document.getElementById('row-god').style.display = 'table-row';
+      document.getElementById('row-inf').style.display = 'table-row';
+      document.getElementById('row-omegaplus').style.display = 'table-row';
+      document.getElementById('omega-name').innerText = "お前は一体何者なんだ";
+      document.getElementById('r-prob').innerText = "73.826%";
+    }
 
     function tapGame() {
       const btn = document.getElementById('tap-btn');
@@ -405,9 +439,11 @@
       if (!isPlaying) {
         isPlaying = true;
         count = 1;
-        timeLeft = 10;
+        timeLeft = isHimajinMode ? 20 : 10;
+        
         document.getElementById('game-result').innerText = "";
         document.getElementById('score').innerText = "スコア: " + count + "回";
+        document.getElementById('timer').innerText = "残り時間: " + timeLeft + "秒";
         btn.innerText = "連打しろーー！";
 
         timerId = setInterval(() => {
@@ -423,20 +459,27 @@
             let rank = "";
             let earnedTickets = 0;
 
-            if (count >= 100) {
-              rank = "👑 100回越え!? 連打の神降臨！";
-              earnedTickets = 50;
-            } else if (count >= 70) {
-              rank = "⚡ 超人レベル！指から光出てる！";
-              earnedTickets = 20;
-            } else if (count >= 50) {
-              rank = "🏆 達人レベル！人間卒業！";
+            // 暇人モード解放判定：1タップのまま制限時間終了
+            if (count === 1 && !isHimajinMode) {
+              enableHimajinMode();
+              rank = "⚡ 限界突破！！【暇人モード】が発動した！<br>連打時間20秒UP＆ガチャに「裏レア」追加！！";
               earnedTickets = 10;
-            } else if (count >= 30) {
-              rank = "🔥 プロ連打士！めちゃくちゃ早い！";
-              earnedTickets = 3;
             } else {
-              rank = "😊 ナイスチャレンジ！(30回以上でチケットGET)";
+              if (count >= 100) {
+                rank = "👑 100回越え!? 連打の神降臨！";
+                earnedTickets = 50;
+              } else if (count >= 70) {
+                rank = "⚡ 超人レベル！指から光出てる！";
+                earnedTickets = 20;
+              } else if (count >= 50) {
+                rank = "🏆 達人レベル！人間卒業！";
+                earnedTickets = 10;
+              } else if (count >= 30) {
+                rank = "🔥 プロ連打士！めちゃくちゃ早い！";
+                earnedTickets = 3;
+              } else {
+                rank = "😊 ナイスチャレンジ！(30回以上でチケットGET)";
+              }
             }
 
             if (earnedTickets > 0) {
@@ -446,10 +489,12 @@
 
             document.getElementById('game-result').innerHTML = rank;
 
+            // クールタイム（通常5秒 / 暇人モード時3秒）
+            const coolTime = isHimajinMode ? 3000 : 5000;
             setTimeout(() => {
               btn.disabled = false;
               btn.innerText = "もう一度遊ぶ！";
-            }, 5000);
+            }, coolTime);
           }
         }, 1000);
       } else {
@@ -479,27 +524,45 @@
         for (let i = 0; i < times; i++) {
           const rand = Math.random() * 100;
 
-          if (rand < 0.01) {
-            resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
+          if (isHimajinMode && rand < 0.001) {
+            resultsHtml += `<div class="rarity-god">⚡⚡【GOD】 暇人の神 ⚡⚡</div>`;
             hasSpecial = true;
-            specialMsg = "😱😱😱【1/10000の神神神引き】最高レア度『Ω お前は一体何者なんだ』が降臨しました！！！奇跡！！😱😱😱";
-          } else if (rand < 0.06) {
+            specialMsg = "🌌🌌🌌【1/100000の奇跡】GOD『暇人の神』が降臨！！！全人類の頂点に立ちました！！！🌌🌌🌌";
+          } else if (isHimajinMode && rand < 0.006) {
+            resultsHtml += `<div class="rarity-inf">💫 【∞】 超越者 💫</div>`;
+            if (!hasSpecial) {
+              hasSpecial = true;
+              specialMsg = "🌟🌟🌟【1/20000の超引き】レア度『∞ 超越者』が出ました！！もはや人間ではありません！！🌟🌟🌟";
+            }
+          } else if (isHimajinMode && rand < 0.014) {
+            resultsHtml += `<div class="rarity-omegaplus">👑 【Ω+】 誇れ。オマエは暇人だ。 👑</div>`;
+            if (!hasSpecial) {
+              hasSpecial = true;
+              specialMsg = "🔥🔥🔥【超激レア】Ω+『誇れ。オマエは暇人だ。』を獲得！！胸を張れ！！🔥🔥🔥";
+            }
+          } else if (rand < (isHimajinMode ? 0.024 : 0.01)) {
+            resultsHtml += `<div class="rarity-omega">🌌 【Ω】 お前は一体何者なんだ 🌌</div>`;
+            if (!hasSpecial) {
+              hasSpecial = true;
+              specialMsg = "😱😱😱【1/10000の神引き】最高レア度『Ω お前は一体何者なんだ』が降臨しました！！！😱😱😱";
+            }
+          } else if (rand < (isHimajinMode ? 0.074 : 0.06)) {
             resultsHtml += `<div class="rarity-urplus">⚡ 【UR+】 暇を極めし者 ⚡</div>`;
             if (!hasSpecial) {
               hasSpecial = true;
-              specialMsg = "🔥🔥【1/2000の超神引き】UR+『暇を極めし者』が出ました！！凄すぎる！！🔥🔥";
+              specialMsg = "🔥🔥【超神引き】UR+『暇を極めし者』が出ました！！凄すぎる！！🔥🔥";
             }
-          } else if (rand < 0.16) {
+          } else if (rand < (isHimajinMode ? 0.174 : 0.16)) {
             resultsHtml += `<div class="rarity-lr">🌈 【LR】 伝説の暇人 🌈</div>`;
             if (!hasSpecial) {
               hasSpecial = true;
-              specialMsg = "🎉🎉🎉【神引き】0.1%の奇跡！LR「伝説の暇人」降臨！！🎉🎉🎉";
+              specialMsg = "🎉🎉🎉【神引き】LR「伝説の暇人」降臨！！🎉🎉🎉";
             }
-          } else if (rand < 1.16) {
+          } else if (rand < (isHimajinMode ? 1.174 : 1.16)) {
             resultsHtml += `<div class="rarity-ur">✨ 【UR】 冷凍みかん ✨</div>`;
-          } else if (rand < 6.16) {
+          } else if (rand < (isHimajinMode ? 6.174 : 6.16)) {
             resultsHtml += `<div class="rarity-ssr">🌟 【SSR】 フローズンパイン 🌟</div>`;
-          } else if (rand < 26.16) {
+          } else if (rand < (isHimajinMode ? 26.174 : 26.16)) {
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
             resultsHtml += `<div class="rarity-r">🍍 【R】 冷冷凍パイン</div>`;

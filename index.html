@@ -192,7 +192,7 @@
     <div class="box">
       <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🍧 MENU 🍧</p>
       <div class="menu-container">
-        <div class="menu-item"><span>🍊 冷凍みかん</span><span>200円</span></div>
+        <div class="menu-item"><span>🍊 冷冷凍みかん</span><span>200円</span></div>
         <div class="menu-item"><span>🍌 チョコバナナ</span><span>300円</span></div>
         <div class="menu-item"><span>🍍 冷凍パイン</span><span>300円</span></div>
         <div class="menu-item"><span>🍧 フローズンパイン</span><span>300円 <span class="sold-out">【SOLD OUT】</span></span></div>
@@ -256,7 +256,7 @@
     <div class="box">
       <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🎰 3-6 ガチャ 🎰</p>
       <div class="ticket-display">
-        🎫 所持ガチャチケット: <span id="ticket-count">3</span> 枚
+        🎫 所持ガチャチケット: <span id="ticket-count">5</span> 枚
       </div>
 
       <button class="btn gacha-btn" onclick="drawGacha(1)">1回引く (1枚)</button>
@@ -274,7 +274,7 @@
         </tr>
         <tr>
           <td class="rarity-omega">Ω</td>
-          <td>？？？</td>
+          <td>お前は一体何者なんだ</td>
           <td>0.01%</td>
         </tr>
         <tr>
@@ -315,7 +315,7 @@
     // --- チケットの初期化・保存処理 ---
     let tickets = localStorage.getItem('gachaTickets');
     if (tickets === null) {
-      tickets = 5; // 初期所持数も少し増やして5枚に！
+      tickets = 5;
       localStorage.setItem('gachaTickets', tickets);
     } else {
       tickets = parseInt(tickets);
@@ -472,7 +472,7 @@
           } else if (rand < 26.16) {
             resultsHtml += `<div class="rarity-sr">🍌 【SR】 チョコバナナ</div>`;
           } else {
-            resultsHtml += `<div class="rarity-r">🍍 【R】 冷凍パイン</div>`;
+            resultsHtml += `<div class="rarity-r">🍍 【R】 冷冷凍パイン</div>`;
           }
         }
 

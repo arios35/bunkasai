@@ -299,16 +299,122 @@
       cursor: pointer;
     }
 
-    /* 震えさせず画面中央に固定するテキスト枠 */
-    .cutin-content {
+    /* === ここからパチスロ「最高演出」用の背景演出 === */
+
+    /* GOD専用：背景を暗めのラジアルにして光の演出を映えさせる */
+    #cutin-overlay.god-active {
+      background: radial-gradient(circle at center, rgba(20,0,0,0.55) 0%, rgba(0,0,0,0.92) 75%);
+    }
+
+    /* 回転する金の光線（サンバースト） */
+    #god-rays {
+      display: none;
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10000;
-      width: 100%;
+      width: 250vmax;
+      height: 250vmax;
+      transform: translate(-50%, -50%) rotate(0deg);
+      background: repeating-conic-gradient(
+        from 0deg,
+        #ffe066 0deg 5deg,
+        #ff3b00 5deg 10deg,
+        #ffe066 10deg 15deg,
+        rgba(0,0,0,0) 15deg 20deg
+      );
+      opacity: 0.5;
+      z-index: 9997;
+      animation: god-rays-spin 3s linear infinite;
       pointer-events: none;
     }
+    @keyframes god-rays-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    /* 逆回転させる2枚目のレイヤーで密度アップ */
+    #god-rays-2 {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 220vmax;
+      height: 220vmax;
+      transform: translate(-50%, -50%) rotate(0deg);
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(255,255,255,0.35) 0deg 3deg,
+        rgba(0,0,0,0) 3deg 12deg
+      );
+      opacity: 0.6;
+      z-index: 9997;
+      animation: god-rays-spin-rev 2.2s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes god-rays-spin-rev {
+      from { transform: translate(-50%, -50%) rotate(360deg); }
+      to   { transform: translate(-50%, -50%) rotate(0deg); }
+    }
+
+    /* 拡大していく波紋リング（プレミア演出の輪） */
+    #god-rings {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      z-index: 9998;
+      pointer-events: none;
+    }
+    .god-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border: 4px solid #ffe066;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      box-shadow: 0 0 25px #ffe066;
+      animation: god-ring-pulse 2s ease-out infinite;
+    }
+    .god-ring:nth-child(2) { animation-delay: 0.65s; border-color: #ff3b00; box-shadow: 0 0 25px #ff3b00; }
+    .god-ring:nth-child(3) { animation-delay: 1.3s;  border-color: #ffffff; box-shadow: 0 0 25px #ffffff; }
+    @keyframes god-ring-pulse {
+      0%   { width: 10px; height: 10px; opacity: 0.9; }
+      80%  { opacity: 0.25; }
+      100% { width: 1400px; height: 1400px; opacity: 0; }
+    }
+
+    /* 白い高速ストロボフラッシュ（発生の瞬間の「ピカッ」） */
+    #god-strobe {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffffff;
+      z-index: 9996;
+      opacity: 0;
+      pointer-events: none;
+      animation: god-strobe-flash 0.18s steps(1) infinite;
+    }
+    @keyframes god-strobe-flash {
+      0%   { opacity: 0; }
+      15%  { opacity: 0.35; }
+      30%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* テキストの視認性を上げるための縁取り＆背景パネル */
+    .cutin-text-panel {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 6px 22px;
+      border-radius: 30px;
+      backdrop-filter: blur(1px);
+    }
+
+    /* === パチスロ演出ここまで === */
 
     /* 圧倒的GOD強調タイトル */
     #cutin-main-title {
@@ -319,8 +425,11 @@
       background: linear-gradient(180deg, #ffffff 0%, #ffff00 40%, #ff8800 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 2.5px #6a0000;
       filter: drop-shadow(0 0 20px #ff0000) drop-shadow(0 0 40px #ffff00);
       animation: god-text-pop 0.3s infinite alternate;
+      position: relative;
+      z-index: 10001;
     }
 
     #himajin-overlay {
@@ -353,10 +462,21 @@
 
   <!-- ドーパミン全開カットイン（画面固定テキスト） -->
   <div id="cutin-overlay" class="overlay" onclick="closeCutin()">
+
+    <!-- GOD専用：光線・リング・ストロボ（通常は非表示） -->
+    <div id="god-rays"></div>
+    <div id="god-rays-2"></div>
+    <div id="god-rings">
+      <div class="god-ring"></div>
+      <div class="god-ring"></div>
+      <div class="god-ring"></div>
+    </div>
+    <div id="god-strobe"></div>
+
     <div class="cutin-content">
-      <p id="cutin-sub-title" style="font-size: 28px; color: #fff; margin: 0; font-weight: 900; text-shadow: 0 0 10px #000;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
+      <p id="cutin-sub-title" class="cutin-text-panel" style="font-size: 28px; color: #fff; margin: 0; font-weight: 900; text-shadow: 0 0 10px #000;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
       <h2 id="cutin-main-title">⚡ GOD 暇人の神 ⚡</h2>
-      <p id="cutin-desc" style="font-size: 22px; color: #fff; margin-top: 15px; font-weight: bold; text-shadow: 0 0 10px #000;">【1/100,000】全人類の頂点に到達！！</p>
+      <p id="cutin-desc" class="cutin-text-panel" style="font-size: 22px; color: #fff; margin-top: 15px; font-weight: bold; text-shadow: 0 0 10px #000;">【1/100,000】全人類の頂点に到達！！</p>
       <p style="font-size: 15px; color: #fff; margin-top: 40px; background: rgba(0,0,0,0.7); display: inline-block; padding: 8px 20px; border-radius: 20px; border: 1px solid #fff;">（タップして結果を確認する）</p>
     </div>
   </div>
@@ -695,6 +815,29 @@
     // --- 余韻用フラグ ---
     let pendingFireworksDuration = 0;
 
+    // --- GOD専用エフェクトの表示/非表示切り替え ---
+    function setGodEffects(on) {
+      const overlay = document.getElementById('cutin-overlay');
+      const rays = document.getElementById('god-rays');
+      const rays2 = document.getElementById('god-rays-2');
+      const rings = document.getElementById('god-rings');
+      const strobe = document.getElementById('god-strobe');
+
+      if (on) {
+        overlay.classList.add('god-active');
+        rays.style.display = 'block';
+        rays2.style.display = 'block';
+        rings.style.display = 'block';
+        strobe.style.display = 'block';
+      } else {
+        overlay.classList.remove('god-active');
+        rays.style.display = 'none';
+        rays2.style.display = 'none';
+        rings.style.display = 'none';
+        strobe.style.display = 'none';
+      }
+    }
+
     // --- ガチャ演出 ---
     function drawGacha(times) {
       if (tickets < times && !isDevMode) {
@@ -792,17 +935,19 @@
 
         // ① ドーパミン全開カットイン演出を表示
         if (maxRarityLevel === 4) {
-          // GOD: 激震カットイン ＋ 超強調文字
+          // GOD: パチスロ最高演出（金の光線＋ストロボ＋波紋リング）＋ 激震カットイン
           document.getElementById('cutin-sub-title').innerText = "🎉🎉🎉 奇跡降臨 🎉🎉🎉";
           document.getElementById('cutin-main-title').innerText = "⚡ GOD 暇人の神 ⚡";
           document.getElementById('cutin-desc').innerText = "【1/100,000】全人類の頂点に到達！！";
-          
+
+          setGodEffects(true);
           document.getElementById('cutin-overlay').style.display = 'flex';
           mainContainer.classList.add('god-bg');
           pendingFireworksDuration = 30;
 
         } else if (maxRarityLevel === 3) {
-          // ∞: カットイン表示
+          // ∞: カットイン表示（GOD専用エフェクトはオフのまま）
+          setGodEffects(false);
           document.getElementById('cutin-sub-title').innerText = "🌟🌟🌟 超越降臨 🌟🌟🌟";
           document.getElementById('cutin-main-title').innerText = "💫 【∞】 超越者 💫";
           document.getElementById('cutin-desc').innerText = "【1/20,000】次元を超越した暇人！！";
@@ -828,6 +973,7 @@
     function closeCutin() {
       document.getElementById('cutin-overlay').style.display = 'none';
       document.getElementById('main-container').classList.remove('god-bg');
+      setGodEffects(false);
 
       if (pendingFireworksDuration > 0) {
         startFireworks(pendingFireworksDuration);

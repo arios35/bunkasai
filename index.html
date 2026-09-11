@@ -13,6 +13,7 @@
       padding: 30px 15px 60px 15px;
       margin: 0;
       overflow-x: hidden;
+      position: relative;
     }
     .container {
       max-width: 400px;
@@ -23,6 +24,7 @@
       background: rgba(0, 0, 0, 0.2);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       position: relative;
+      z-index: 2;
     }
     h1 {
       color: #ffeb3b;
@@ -104,13 +106,13 @@
       margin-top: 10px;
     }
     
-    /* 超巨大化した連打ボタン */
+    /* 超巨大連打ボタン */
     .game-btn {
       background-color: #e91e63;
       width: 95%;
       max-width: 360px;
       height: 110px;
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 900;
       border-radius: 25px;
       margin-top: 15px;
@@ -246,11 +248,11 @@
       100% { background-color: #ff007f; filter: brightness(1.5); }
     }
     @keyframes god-hyper {
-      0% { background-color: #ffff00; transform: scale(1); }
-      25% { background-color: #ff0000; transform: scale(1.02); }
-      50% { background-color: #00ffff; transform: scale(0.98); }
-      75% { background-color: #ff00ff; transform: scale(1.02); }
-      100% { background-color: #ffff00; transform: scale(1); }
+      0% { background-color: #ffff00; filter: brightness(1.8); }
+      25% { background-color: #ff0000; filter: brightness(1.8); }
+      50% { background-color: #00ffff; filter: brightness(1.8); }
+      75% { background-color: #ff00ff; filter: brightness(1.8); }
+      100% { background-color: #ffff00; filter: brightness(1.8); }
     }
     @keyframes himajin-enter {
       0% { background-color: #7928ca; filter: brightness(2); }
@@ -259,10 +261,10 @@
     }
     .rainbow-bg { animation: rainbow 0.3s infinite; }
     .omega-bg { animation: omega-flash 0.2s infinite; }
-    .god-bg { animation: god-hyper 0.08s infinite; }
+    .god-bg { animation: god-hyper 0.06s infinite; }
     .himajin-bg { animation: himajin-enter 0.2s 10; }
 
-    /* 全画面オーバーレイ */
+    /* 全画面カットイン・オーバーレイ */
     .overlay {
       display: none;
       position: fixed;
@@ -277,11 +279,12 @@
       box-sizing: border-box;
       overflow: hidden;
     }
-    #fireworks-overlay {
+    #cutin-overlay {
       color: #ffff00;
       text-shadow: 0 0 20px #ffff00, 0 0 40px #ff0000;
+      cursor: pointer;
     }
-    #fireworks-overlay h2 {
+    #cutin-overlay h2 {
       font-size: 36px;
       margin: 15px 0;
       animation: pulse 0.3s infinite;
@@ -298,27 +301,29 @@
       white-space: nowrap;
     }
 
-    /* 花火キャンバス */
-    #fireworks-canvas {
-      position: absolute;
+    /* 背景固定の花火キャンバス（普通の画面の後ろで打ち上がる） */
+    #bg-fireworks-canvas {
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
-      z-index: -1;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
 
-  <!-- 花火演出オーバーレイ（GOD / ∞ 兼用） -->
-  <div id="fireworks-overlay" class="overlay" onclick="closeOverlay('fireworks-overlay')">
-    <canvas id="fireworks-canvas"></canvas>
-    <p id="fw-sub-title" style="font-size: 20px; color: #fff; margin: 0;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
-    <h2 id="fw-main-title">⚡ GOD 暇人の神 ⚡</h2>
-    <p id="fw-desc" style="font-size: 18px; color: #fff; margin-top: 15px;">【1/100,000】全人類の頂点に到達！！</p>
-    <p style="font-size: 13px; color: #aaa; margin-top: 40px;">（タップして閉じる）</p>
+  <!-- 背景花火キャンバス（画面最背面で余韻に浸る用） -->
+  <canvas id="bg-fireworks-canvas"></canvas>
+
+  <!-- ドーパミン全開カットイン（タップしたら消えて背景花火に移行） -->
+  <div id="cutin-overlay" class="overlay" onclick="closeCutin()">
+    <p id="cutin-sub-title" style="font-size: 22px; color: #fff; margin: 0;">🎉🎉🎉 奇跡降臨 🎉🎉🎉</p>
+    <h2 id="cutin-main-title">⚡ GOD 暇人の神 ⚡</h2>
+    <p id="cutin-desc" style="font-size: 18px; color: #fff; margin-top: 15px;">【1/100,000】全人類の頂点に到達！！</p>
+    <p style="font-size: 14px; color: #aaa; margin-top: 40px;">（タップして結果を確認する）</p>
   </div>
 
   <!-- 暇人モード突入ド派手オーバーレイ -->
@@ -409,8 +414,8 @@
       <div id="timer" style="font-size: 16px; font-weight: bold;">残り時間: 10秒</div>
       <div id="score" style="font-size: 24px; font-weight: bold; color: #ffeb3b; margin: 10px 0;">スコア: 0回</div>
       
-      <!-- 超巨大連打ボタン -->
-      <button id="tap-btn" class="btn game-btn" onclick="tapGame()">タップしてスタート！</button>
+      <!-- 「スタート！！」固定の超巨大連打ボタン -->
+      <button id="tap-btn" class="btn game-btn" onclick="tapGame()">スタート！！</button>
       <div id="game-result"></div>
     </div>
 
@@ -503,18 +508,10 @@
     }
 
     // --- 解放フラグ（Ω以上の図鑑解放管理） ---
-    const unlocked = {
-      omega: false,
-      omegaplus: false,
-      inf: false,
-      god: false
-    };
+    const unlocked = { omega: false, omegaplus: false, inf: false, god: false };
 
     function closeOverlay(id) {
       document.getElementById(id).style.display = 'none';
-      if (id === 'fireworks-overlay') {
-        stopFireworks();
-      }
     }
 
     // --- おみくじ ---
@@ -552,7 +549,7 @@
       }
     }
 
-    // --- 連打ゲーム & フラグ管理 ---
+    // --- 連打ゲーム ---
     let isHimajinMode = false;
     let isDevMode = false;
     let count = 0;
@@ -594,7 +591,6 @@
         document.getElementById('game-result').innerText = "";
         document.getElementById('score').innerText = "スコア: " + count + "回";
         document.getElementById('timer').innerText = "残り時間: " + timeLeft + "秒";
-        btn.innerText = "連打！！連打！！";
 
         timerId = setInterval(() => {
           timeLeft--;
@@ -604,7 +600,6 @@
             clearInterval(timerId);
             isPlaying = false;
             btn.disabled = true;
-            btn.innerText = "終了！結果発表！";
 
             let rank = "";
             let earnedTickets = 0;
@@ -653,7 +648,6 @@
             const coolTime = isHimajinMode ? 3000 : 5000;
             setTimeout(() => {
               btn.disabled = false;
-              btn.innerText = "もう一度遊ぶ！";
             }, coolTime);
           }
         }, 1000);
@@ -662,6 +656,9 @@
         document.getElementById('score').innerText = "スコア: " + count + "回";
       }
     }
+
+    // --- 余韻用フラグ ---
+    let pendingFireworksDuration = 0;
 
     // --- ガチャ演出 ---
     function drawGacha(times) {
@@ -758,57 +755,59 @@
 
         const mainContainer = document.getElementById('main-container');
 
-        // 長尺ド派手演出判定
+        // ① 先にドーパミン全開カットイン演出を表示
         if (maxRarityLevel === 4) {
-          // GOD演出：画面フラッシュ ＋ 30秒ド派手花火
-          document.getElementById('fw-sub-title').innerText = "🎉🎉🎉 奇跡降臨 🎉🎉🎉";
-          document.getElementById('fw-main-title').innerText = "⚡ GOD 暇人の神 ⚡";
-          document.getElementById('fw-desc').innerText = "【1/100,000】全人類の頂点に到達！！";
+          // GOD: 激しいフラッシュ ＋ カットイン表示
+          document.getElementById('cutin-sub-title').innerText = "🎉🎉🎉 奇跡降臨 🎉🎉🎉";
+          document.getElementById('cutin-main-title').innerText = "⚡ GOD 暇人の神 ⚡";
+          document.getElementById('cutin-desc').innerText = "【1/100,000】全人類の頂点に到達！！";
           
-          document.getElementById('fireworks-overlay').style.display = 'flex';
+          document.getElementById('cutin-overlay').style.display = 'flex';
           mainContainer.classList.add('god-bg');
-          startFireworks(30);
-
-          setTimeout(() => {
-            mainContainer.classList.remove('god-bg');
-          }, 30000);
+          pendingFireworksDuration = 30; // 画面を閉じたら30秒花火
 
         } else if (maxRarityLevel === 3) {
-          // ∞演出：12秒ド派手花火
-          document.getElementById('fw-sub-title').innerText = "🌟🌟🌟 超越降臨 🌟🌟🌟";
-          document.getElementById('fw-main-title').innerText = "💫 【∞】 超越者 💫";
-          document.getElementById('fw-desc').innerText = "【1/20,000】次元を超越した暇人！！";
+          // ∞: カットイン表示
+          document.getElementById('cutin-sub-title').innerText = "🌟🌟🌟 超越降臨 🌟🌟🌟";
+          document.getElementById('cutin-main-title').innerText = "💫 【∞】 超越者 💫";
+          document.getElementById('cutin-desc').innerText = "【1/20,000】次元を超越した暇人！！";
 
-          document.getElementById('fireworks-overlay').style.display = 'flex';
-          startFireworks(12);
+          document.getElementById('cutin-overlay').style.display = 'flex';
+          mainContainer.classList.add('god-bg');
+          pendingFireworksDuration = 12; // 画面を閉じたら12秒花火
 
         } else if (maxRarityLevel === 2) {
-          // Ω系演出：8秒間フラッシュ
           mainContainer.classList.add('omega-bg');
           alert(specialMsg);
-          setTimeout(() => {
-            mainContainer.classList.remove('omega-bg');
-          }, 8000);
+          setTimeout(() => { mainContainer.classList.remove('omega-bg'); }, 8000);
         } else if (maxRarityLevel === 1) {
-          // LR系演出：5秒間虹色
           mainContainer.classList.add('rainbow-bg');
           alert(specialMsg);
-          setTimeout(() => {
-            mainContainer.classList.remove('rainbow-bg');
-          }, 5000);
+          setTimeout(() => { mainContainer.classList.remove('rainbow-bg'); }, 5000);
         }
 
       }, 500);
     }
 
-    // --- ド派手花火アニメーション処理 ---
+    // ② カットインをタップで閉じた後、背景で花火を打ち上げて「余韻」に浸る
+    function closeCutin() {
+      document.getElementById('cutin-overlay').style.display = 'none';
+      document.getElementById('main-container').classList.remove('god-bg');
+
+      if (pendingFireworksDuration > 0) {
+        startFireworks(pendingFireworksDuration);
+        pendingFireworksDuration = 0;
+      }
+    }
+
+    // --- 普通の量の花火アニメーション（背景で優越感に浸る） ---
     let fireworksAnimId = null;
     let fireworksTimeoutId = null;
 
     function startFireworks(durationSec) {
-      stopFireworks(); // 重複防止
+      stopFireworks();
 
-      const canvas = document.getElementById('fireworks-canvas');
+      const canvas = document.getElementById('bg-fireworks-canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -816,36 +815,34 @@
       let particles = [];
       const colors = ['#ffff00', '#ff007f', '#00ffff', '#00ffcc', '#ff9800', '#ffffff', '#ff0000', '#76ff03'];
 
-      function createFireworkCluster() {
-        // 一度に5発の爆発を同時生成（超ド派手）
-        for (let k = 0; k < 5; k++) {
-          const x = Math.random() * canvas.width;
-          const y = Math.random() * (canvas.height * 0.7);
-          const color = colors[Math.floor(Math.random() * colors.length)];
-          
-          for (let i = 0; i < 60; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 8 + 2;
-            particles.push({
-              x: x, y: y,
-              vx: Math.cos(angle) * speed,
-              vy: Math.sin(angle) * speed,
-              alpha: 1,
-              color: color,
-              size: Math.random() * 4 + 2
-            });
-          }
+      function createSingleFirework() {
+        // 最初期のような、心地よい普通の発射量（1発ずつ丁寧に広がる）
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * (canvas.height * 0.6) + (canvas.height * 0.1);
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        for (let i = 0; i < 45; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 5 + 1.5;
+          particles.push({
+            x: x, y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            color: color,
+            size: Math.random() * 3 + 1.5
+          });
         }
       }
 
       let timer = 0;
       function animate() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillStyle = 'rgba(27, 67, 50, 0.2)'; // 背景色（#1b4332）に合わせた残像
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 毎フレームに近い高頻度で花火連打発射
-        if (timer % 3 === 0) {
-          createFireworkCluster();
+        // ほどよいペースで打ち上げ（約0.3秒に1発）
+        if (timer % 18 === 0) {
+          createSingleFirework();
         }
         timer++;
 
@@ -853,8 +850,8 @@
           let p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.06; // 重力
-          p.alpha -= 0.012;
+          p.vy += 0.04; // 程よい重力
+          p.alpha -= 0.01;
 
           if (p.alpha <= 0) {
             particles.splice(i, 1);
@@ -871,7 +868,6 @@
       }
       animate();
 
-      // 指定秒数後に自動停止
       fireworksTimeoutId = setTimeout(() => {
         stopFireworks();
       }, durationSec * 1000);
@@ -886,6 +882,9 @@
         clearTimeout(fireworksTimeoutId);
         fireworksTimeoutId = null;
       }
+      const canvas = document.getElementById('bg-fireworks-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   </script>
 

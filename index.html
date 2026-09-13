@@ -629,7 +629,15 @@
         </tr>
       </table>
     </div>
+
+    <!-- ミニゲーム部屋への導線 -->
+    <div class="box">
+      <p style="font-weight: bold; font-size: 18px; margin: 0 0 10px 0;">🕹️ 3-6 ミニゲーム部屋 🕹️</p>
+      <p style="font-size: 13px; margin: 0 0 12px 0;">連打・反射神経・数当て・2Dアクションで遊べる別室です！（このページとはトークン別管理です）</p>
+      <a href="https://arios35.github.io/3-6-minigames/" style="display:inline-block; text-decoration:none; background: linear-gradient(45deg, #ff2fa0, #7928ca); color:#ffffff; font-size:16px; font-weight:bold; padding:14px 28px; border-radius:30px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">▶ ミニゲーム部屋に入る</a>
+    </div>
   </div>
+
 
   <script>
     // --- アクセスカウント ---
@@ -763,13 +771,13 @@
               enableHimajinMode();
               earnedTickets = 10;
               rank = "⚡ 限界突破！！【暇人モード】発動！";
-            } else if (isHimajinMode && count === 75 && !isDevMode) {
+            } else if (isHimajinMode && count === 5 && !isDevMode) {
               enableDevMode();
               rank = "🛠️ 開発者モードに切り替わりました！（LR以上確定）";
             } else {
               if (count >= 200) {
                 rank = "👑 200回達成!! まさに【連打の神】限界達成！！";
-                earnedTickets = 250;
+                earnedTickets = 500;
               } else if (count >= 160) {
                 rank = "🔥 160回達成!! 【超人連打マスター】爆誕！";
                 earnedTickets = 200;

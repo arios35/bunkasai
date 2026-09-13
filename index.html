@@ -769,7 +769,7 @@
             } else {
               if (count >= 200) {
                 rank = "👑 200回達成!! まさに【連打の神】限界達成！！";
-                earnedTickets = 250;
+                earnedTickets = 500;
               } else if (count >= 160) {
                 rank = "🔥 160回達成!! 【超人連打マスター】爆誕！";
                 earnedTickets = 200;
@@ -814,6 +814,10 @@
 
     // --- 余韻用フラグ ---
     let pendingFireworksDuration = 0;
+
+    // --- カットインのタップ無効時間管理（見逃し防止） ---
+    const CUTIN_LOCK_MS = 5000; // 表示から5秒間はタップしても閉じない
+    let cutinLockUntil = 0;
 
     // --- GOD専用エフェクトの表示/非表示切り替え ---
     function setGodEffects(on) {
@@ -942,6 +946,7 @@
 
           setGodEffects(true);
           document.getElementById('cutin-overlay').style.display = 'flex';
+          cutinLockUntil = Date.now() + CUTIN_LOCK_MS;
           mainContainer.classList.add('god-bg');
           pendingFireworksDuration = 30;
 
@@ -953,6 +958,7 @@
           document.getElementById('cutin-desc').innerText = "【1/20,000】次元を超越した暇人！！";
 
           document.getElementById('cutin-overlay').style.display = 'flex';
+          cutinLockUntil = Date.now() + CUTIN_LOCK_MS;
           mainContainer.classList.add('god-bg');
           pendingFireworksDuration = 12;
 
@@ -971,6 +977,11 @@
 
     // ② カットイン閉じた後に花火を打ち上げる
     function closeCutin() {
+      // 表示直後の連打で誤って閉じないよう、ロック時間中はタップを無視する
+      if (Date.now() < cutinLockUntil) {
+        return;
+      }
+
       document.getElementById('cutin-overlay').style.display = 'none';
       document.getElementById('main-container').classList.remove('god-bg');
       setGodEffects(false);

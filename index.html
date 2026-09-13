@@ -739,7 +739,7 @@
       isDevMode = true;
       document.getElementById('himajin-badge').style.display = 'none';
       document.getElementById('dev-badge').style.display = 'block';
-      updateTickets(9999);
+      updateTickets(1);
       alert("🛠️【隠しコマンド成功】開発者モードが解除されました！\nLR以上の激レア・裏レアしか排出されなくなります！");
     }
 
@@ -771,7 +771,7 @@
               enableHimajinMode();
               earnedTickets = 10;
               rank = "⚡ 限界突破！！【暇人モード】発動！";
-            } else if (isHimajinMode && count === 0120107929 && !isDevMode) {
+            } else if (isHimajinMode && count === 0 && !isDevMode) {
               enableDevMode();
               rank = "🛠️ 開発者モードに切り替わりました！（LR以上確定）";
             } else {
